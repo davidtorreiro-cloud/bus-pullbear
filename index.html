@@ -7,7 +7,7 @@
   <script data-source="assets/appearance.js">
 (function(){
   'use strict';
-  const themes=[['dark','Oscuro'],['light','Claro'],['ivory','Marfil'],['forest','Bosque'],['midnight','Medianoche'],['plum','Ciruela']];
+  const themes=[['dark','Oscuro'],['light','Claro'],['ivory','Marfil'],['forest','Bosque'],['midnight','Medianoche'],['plum','Ciruela'],['ocean','Océano'],['clay','Terracota'],['slate','Pizarra'],['rose','Rosa']];
   const root=document.documentElement;
   let selected='dark';
   try{const saved=JSON.parse(localStorage.getItem('pb-v2-theme'));if(themes.some(([id])=>id===saved))selected=saved;}catch{}
@@ -246,13 +246,53 @@ body{font-size:14px}.micro{font-size:11px;letter-spacing:.4px;text-transform:non
   --warn:#ffdbab;--warn-bg:#ffdbab12;
   --light-button:#faedff;--light-text:#302037;
 }
+:root[data-theme="ocean"]{
+  color-scheme:dark;
+  --bg:#0b272e;--panel:#10343c;--elevated:#18444c;--hover:#225761;
+  --border:#598c97;--border-soft:#2b5c65;
+  --fg:#f0fdff;--muted:#c4e8ec;--quiet:#abd2d8;
+  --accent:#7ee7e1;--accent-tint:#7ee7e11a;--accent-line:#53bdb9;
+  --warn:#ffe09d;--warn-bg:#ffe09d16;
+  --light-button:#e6fafb;--light-text:#0e3036;
+}
+:root[data-theme="clay"]{
+  color-scheme:light;
+  --bg:#f2e4db;--panel:#fff8f3;--elevated:#edd8ca;--hover:#e5c9b7;
+  --border:#a8806b;--border-soft:#d8b9a6;
+  --fg:#332119;--muted:#5d3c2b;--quiet:#704b37;
+  --accent:#9a3f27;--accent-tint:#9a3f2711;--accent-line:#ab5b40;
+  --warn:#775015;--warn-bg:#ffe8b9;
+  --light-button:#623320;--light-text:#fff9f5;
+}
+:root[data-theme="slate"]{
+  color-scheme:dark;
+  --bg:#252f3a;--panel:#303d49;--elevated:#3b4a58;--hover:#46596a;
+  --border:#7c91a3;--border-soft:#506477;
+  --fg:#f7fafc;--muted:#d5e1e9;--quiet:#c3d3df;
+  --accent:#c7dd9b;--accent-tint:#c7dd9b18;--accent-line:#a5bf7b;
+  --warn:#ffe0a2;--warn-bg:#ffe0a214;
+  --light-button:#eff4f8;--light-text:#25303b;
+}
+:root[data-theme="rose"]{
+  color-scheme:light;
+  --bg:#f8e9ee;--panel:#fff9fb;--elevated:#f1dce4;--hover:#eacbd7;
+  --border:#b78396;--border-soft:#dfb8c8;
+  --fg:#39202c;--muted:#684352;--quiet:#71485a;
+  --accent:#a33864;--accent-tint:#a3386412;--accent-line:#b75b81;
+  --warn:#765111;--warn-bg:#fff0c7;
+  --light-button:#6e2f4b;--light-text:#fff7fa;
+}
 
 [data-theme="dark"] .brand-logo,[data-theme="forest"] .brand-logo,
-[data-theme="midnight"] .brand-logo,[data-theme="plum"] .brand-logo{filter:none}
-[data-theme="light"] .brand-logo,[data-theme="ivory"] .brand-logo{filter:invert(1)}
+[data-theme="midnight"] .brand-logo,[data-theme="plum"] .brand-logo,
+[data-theme="ocean"] .brand-logo,[data-theme="slate"] .brand-logo{filter:none}
+[data-theme="light"] .brand-logo,[data-theme="ivory"] .brand-logo,
+[data-theme="clay"] .brand-logo,[data-theme="rose"] .brand-logo{filter:invert(1)}
 
 .theme-dialog{width:min(520px,calc(100% - 30px))}
-.theme-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:20px 22px 22px}
+.theme-dialog[open]{display:flex;flex-direction:column;max-height:calc(100dvh - 32px);overflow:hidden}
+.theme-dialog>.dialog-top{flex:none}
+.theme-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:20px 22px 22px;min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--border) transparent;scroll-padding-block:12px}
 .theme-option{
   display:grid;grid-template-columns:minmax(0,1fr) 18px;column-gap:8px;row-gap:10px;
   min-width:0;padding:10px;text-align:left;background:var(--panel);color:var(--fg);
@@ -284,6 +324,10 @@ body{font-size:14px}.micro{font-size:11px;letter-spacing:.4px;text-transform:non
 [data-theme-choice="forest"]{--preview-bg:#0b1713;--preview-panel:#1b3027;--preview-border:#52715f;--preview-accent:#abd9a5}
 [data-theme-choice="midnight"]{--preview-bg:#0b1424;--preview-panel:#1b2b45;--preview-border:#566f91;--preview-accent:#a2caff}
 [data-theme-choice="plum"]{--preview-bg:#1a111e;--preview-panel:#33233d;--preview-border:#80638f;--preview-accent:#e4b5f0}
+[data-theme-choice="ocean"]{--preview-bg:#0b272e;--preview-panel:#18444c;--preview-border:#598c97;--preview-accent:#7ee7e1}
+[data-theme-choice="clay"]{--preview-bg:#f2e4db;--preview-panel:#fff8f3;--preview-border:#a8806b;--preview-accent:#9a3f27}
+[data-theme-choice="slate"]{--preview-bg:#252f3a;--preview-panel:#3b4a58;--preview-border:#7c91a3;--preview-accent:#c7dd9b}
+[data-theme-choice="rose"]{--preview-bg:#f8e9ee;--preview-panel:#fff9fb;--preview-border:#b78396;--preview-accent:#a33864}
 
 @media(max-width:380px){
   .theme-options{gap:10px;padding:16px}
@@ -505,7 +549,9 @@ dialog.is-closing::backdrop{animation:bus-backdrop-exit var(--motion-dialog-clos
 #themeButton .ui-icon{width:17px;height:17px}
 #openMap{align-items:center;gap:8px}
 .search-box .search-icon{width:20px;height:20px;color:var(--fg)}
-.planner-bottom .all-stops-arrow{width:22px;height:22px;margin-left:auto}
+.planner-bottom .all-stops-arrow{width:18px;height:18px;margin-left:auto}
+.select-wrap:after{display:none}
+.select-wrap .shift-chevron{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--muted);pointer-events:none}
 .report-button{justify-content:flex-start;align-items:baseline;gap:7px;flex-wrap:wrap}
 .report-button .report-link{color:var(--fg);margin-left:0;text-decoration:underline;text-decoration-color:var(--border);text-underline-offset:3px}
 .report-button:hover .report-link{text-decoration-color:currentColor}
@@ -521,19 +567,19 @@ dialog.is-closing::backdrop{animation:bus-backdrop-exit var(--motion-dialog-clos
   <header class="app-header"><a href="#horarios" class="brand" aria-label="Bus Pull&Bear, inicio"><img class="brand-logo" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjUwIiB2aWV3Qm94PSIwIDAgMzAwIDUwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8ZyBjbGlwLXBhdGg9InVybCgjY2xpcDBfOTQ4XzEyMTApIj4KPHBhdGggZD0iTTI5Mi44NTMgMjYuMTI1NEMyOTIuNzc2IDI2LjA5NjQgMjkyLjcwOSAyNi4wNDM5IDI5Mi42NjQgMjUuOTc1MkMyOTIuNjE4IDI1LjkwNjYgMjkyLjU5NCAyNS44MjUzIDI5Mi41OTcgMjUuNzQyOEMyOTIuNiAyNS42NjAzIDI5Mi42MjggMjUuNTgwNyAyOTIuNjc4IDI1LjUxNTJDMjkyLjcyOSAyNS40NDk2IDI5Mi43OTggMjUuNDAxNSAyOTIuODc3IDI1LjM3NzVDMjkzLjYyNiAyNS4xNzU4IDI5NC4zNTMgMjQuOTAyMSAyOTUuMDQ4IDI0LjU2MDNDMjk2LjEwMiAyNC4wNTI1IDI5Ny4wNCAyMy4zMzQxIDI5Ny44MDUgMjIuNDQ5NEMyOTguNTQyIDIxLjU3NTEgMjk5LjEwMSAyMC41NjUgMjk5LjQ1MSAxOS40NzZDMjk5LjgzMSAxOC4yNzM4IDMwMC4wMTYgMTcuMDE4NSAzMDAgMTUuNzU3OEMzMDAuMDAxIDE1LjAzNDQgMjk5Ljk0MSAxNC4zMTIxIDI5OS44MjIgMTMuNTk4NkMyOTkuNzA2IDEyLjkwOTMgMjk5LjUyNyAxMi4yMzIgMjk5LjI4OCAxMS41NzUyQzI5OS4wNDggMTAuOTExNyAyOTguNzQ1IDEwLjI3MjUgMjk4LjM4NCA5LjY2NjNDMjk4IDkuMDI2OTMgMjk3LjU2MiA4LjQyMTYgMjk3LjA3NSA3Ljg1Njk0QzI5Ni41NDcgNy4yNDk5IDI5NS45MzggNi43MTgyMiAyOTUuMjY2IDYuMjc2NzdDMjk0LjUwMiA1Ljc4MTgxIDI5My42ODcgNS4zNzAzMyAyOTIuODM1IDUuMDQ5NDNDMjkxLjg3MiA0LjY4NTgyIDI5MC44NzUgNC40MjIwOCAyODkuODU5IDQuMjYyMzZDMjg4LjcxMyA0LjA3OTMxIDI4Ny41NTQgMy45OTA1NSAyODYuMzk0IDMuOTk2OThIMjcwLjcxM1Y0NS41MTI2SDI3OS4zNjFWMjkuMjU1NkgyODQuNDg4QzI4Ni4zNyAyOS4yNTU2IDI4Ny43NzcgMjkuNjk4OSAyODguNzEgMzAuNTg1NUMyODkuNjQyIDMxLjQ3MiAyOTAuMTEzIDMyLjgwMTkgMjkwLjEyMSAzNC41NzUxVjQyLjY5OTFDMjkwLjEyMSA0NS4xMzU3IDI5MC44OSA0NS41MTI2IDI5MC44OSA0NS41MTI2SDI5OS42MTFDMjk5LjYxMSA0NS41MTI2IDI5OC44NDUgNDQuMDM4IDI5OC44NDUgMzkuMzAzNVYzNC40NjM1QzI5OC44NTIgMzMuNDczMiAyOTguNjk5IDMyLjQ4ODMgMjk4LjM5IDMxLjU0NzRDMjk4LjA4MSAzMC42MjU4IDI5Ny42MTggMjkuNzYzMiAyOTcuMDIxIDI4Ljk5NjJDMjk2LjM4NyAyOC4xODQzIDI5NS42MDQgMjcuNTAxNSAyOTQuNzE0IDI2Ljk4NDhDMjk0LjEyNSAyNi42NDI5IDI5My41MDYgMjYuMzU1MiAyOTIuODY1IDI2LjEyNTRNMjg5LjM0IDIxLjE0MDZDMjg4Ljg2IDIxLjcwMTcgMjg4LjI0OCAyMi4xMzMxIDI4Ny41NTggMjIuMzk1MUMyODYuNzYgMjIuNjg3NCAyODUuOTE2IDIyLjgyODYgMjg1LjA2NyAyMi44MTEzSDI3OS4zMzdWMTAuMDg4NUgyODQuOTAxQzI4NS44MDggMTAuMDY2NiAyODYuNzExIDEwLjIyNDQgMjg3LjU1OCAxMC41NTI5QzI4OC4yNzYgMTAuODQ2NyAyODguOTAyIDExLjMzMDQgMjg5LjM2NyAxMS45NTIxQzI4OS44MzkgMTIuNTg3NyAyOTAuMTkzIDEzLjMwMjYgMjkwLjQxMyAxNC4wNjNDMjkwLjY1NSAxNC45MDQgMjkwLjc3MiAxNS43NzU2IDI5MC43NjMgMTYuNjUwNEMyOTAuNzc0IDE3LjUwOTkgMjkwLjY1NCAxOC4zNjYxIDI5MC40MDcgMTkuMTg5NUMyOTAuMTg3IDE5LjkwOTQgMjg5LjgyMiAyMC41NzcyIDI4OS4zMzcgMjEuMTUyNyIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTI1Ni4zNTggNDUuNTEyNkwyNTQuNDkyIDM2LjUyMDFIMjQzLjM3NkwyNDEuNDUyIDQ1LjUyNDdIMjMyLjA3MUwyNDMuNjYgNC4wMTIwNkgyNTQuMTQyTDI2NS43MzEgNDUuNTI0N0wyNTYuMzU4IDQ1LjUxMjZaTTI0OS4yNzggMTIuMjk1OUMyNDkuMjYyIDEyLjIwNzUgMjQ5LjIxNSAxMi4xMjc1IDI0OS4xNDcgMTIuMDY5OEMyNDkuMDc4IDEyLjAxMjIgMjQ4Ljk5MSAxMS45ODA2IDI0OC45MDEgMTEuOTgwNkMyNDguODExIDExLjk4MDYgMjQ4LjcyNCAxMi4wMTIyIDI0OC42NTUgMTIuMDY5OEMyNDguNTg2IDEyLjEyNzUgMjQ4LjU0IDEyLjIwNzUgMjQ4LjUyNCAxMi4yOTU5QzI0OC4yMjIgMTMuOTYwNSAyNDcuNzU4IDE2LjMyNDcgMjQ3LjM5MyAxOC4wOTQ5QzI0Ni43NjYgMjEuMTM0NiAyNDUuOTc5IDI1LjM5MjYgMjQ1LjAyOSAyOS4yODg3SDI1Mi43ODJDMjUxLjg3NyAyNS42NyAyNTEuMDk5IDIxLjU0NDcgMjUwLjQ3MiAxOC41MDVDMjUwLjA5OCAxNi42OTU2IDI0OS42MDkgMTQuMDg3MiAyNDkuMjY2IDEyLjI5NTkiIGZpbGw9IndoaXRlIi8+CjxwYXRoIGQ9Ik0yMDIuNjYzIDRWNDUuNTEyNkgyMjcuNjU5VjM4LjcyNzVIMjExLjAxVjI3Ljg1MzNIMjI1Ljc3N1YyMC43MjE1SDIxMS4wMVYxMC43ODUxSDIyNy4yNThWNEgyMDIuNjYzWiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTE4Mi44MTcgNEMxODUuMDMzIDMuOTU0NDkgMTg3LjI0MSA0LjI5MTEzIDE4OS4zNDMgNC45OTUxNUMxOTEuMTg2IDUuNjU4NTggMTkyLjU3NCA2LjU2MzI1IDE5My41MDQgNy43MDkxOEMxOTQuMzc1IDguNzUzNTMgMTk1LjA2IDkuOTM5ODcgMTk1LjUyOCAxMS4yMTYzQzE5NS45NTQgMTIuNDQ3OCAxOTYuMTY2IDEzLjc0MzEgMTk2LjE1NSAxNS4wNDYxQzE5Ni4xODUgMTcuMDIxOCAxOTUuNTQxIDE4Ljk0ODggMTk0LjMzMSAyMC41MTA0QzE5My4zNTYgMjEuNzc2OSAxOTEuOTY2IDIyLjczNTkgMTkwLjE2MyAyMy4zODcyQzE5MC4wODcgMjMuNDE3MyAxOTAuMDIyIDIzLjQ3IDE4OS45NzcgMjMuNTM4M0MxODkuOTMyIDIzLjYwNjUgMTg5LjkxIDIzLjY4NjkgMTg5LjkxMiAyMy43Njg2QzE4OS45MTQgMjMuODUwMiAxODkuOTQxIDIzLjkyOTIgMTg5Ljk5IDIzLjk5NDhDMTkwLjAzOSAyNC4wNjA0IDE5MC4xMDcgMjQuMTA5MyAxOTAuMTg0IDI0LjEzNTFDMTkyLjAwOSAyNC42MDk5IDE5My42NDUgMjUuNjMwNSAxOTQuODc0IDI3LjA2MDJDMTk2LjMzNSAyOC43OTUyIDE5Ny4wNjcgMzEuMDI2NyAxOTcuMDY5IDMzLjc1NDhDMTk3LjA3OSAzNS4xNzkyIDE5Ni44MzcgMzYuNTk0MiAxOTYuMzU0IDM3LjkzNDRDMTk1Ljg0NyAzOS4yOTc4IDE5NS4wOTQgNDAuNTU2MSAxOTQuMTMyIDQxLjY0NjZDMTkzLjEyNiA0Mi44MTY3IDE5MS43MSA0My43NTI1IDE4OS44ODMgNDQuNDU0MUMxODcuODE5IDQ1LjE5NTggMTg1LjYzNyA0NS41NTI1IDE4My40NDQgNDUuNTA2NkgxNjguMzY2VjRIMTgyLjgxN1pNMTc2LjcxNyAxMC4xMzM3VjIxLjIzNzFIMTgxLjI3NkMxODUuMDQgMjEuMjM3MSAxODYuOTIxIDE5LjU4NzYgMTg2LjkyMSAxNS42ODU0QzE4Ni45MjEgMTEuNzgzMiAxODUuMDQgMTAuMTMzNyAxODEuMjc2IDEwLjEzMzdIMTc2LjcxN1pNMTc2LjcxNyAyNy4yOTI0VjM5LjQyNzJIMTgxLjk2MUMxODQuMDE1IDM5LjQyNzIgMTg1LjUwNyAzOC44MDQ5IDE4Ni40MzYgMzcuNTYwNUMxODcuMzY4IDM2LjMxODEgMTg3LjgzMiAzNS4wNTQ2IDE4Ny44MzIgMzMuMTY2OEMxODcuODMyIDMxLjI3OSAxODcuMzU5IDMwLjA3ODggMTg2LjQwNiAyOC45NjYxQzE4NS40NTMgMjcuODUzMyAxODQuMDMyIDI3LjI5MjQgMTgyLjEzMyAyNy4yOTI0SDE3Ni43MTdaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNOC42NTE3MyAyOS45MDA5VjQ1LjUxMjZINS43MjIwNWUtMDZWNEgxNS43ODA2QzE4LjM2MzkgNCAyMC42MTU2IDQuMzkwMDEgMjIuNTM1NSA1LjE3MDA1QzI0LjQ1NTQgNS45NTAwOCAyNS45MjgxIDYuOTgyNDIgMjYuOTUzNCA4LjI2NzA2QzI3LjkzODMgOS40Nzg0NSAyOC43MDEgMTAuODU0NyAyOS4yMDYgMTIuMzMyMUMyOS42ODE0IDEzLjc1NTMgMjkuOTIxOCAxNS4yNDY0IDI5LjkxNzcgMTYuNzQ2OUMyOS45NzA4IDIwLjE1NTEgMjguNzI4MSAyMy40NTY0IDI2LjQ0MDcgMjUuOTgzN0MyNC4xMjA3IDI4LjU5NzIgMjAuNDUzOCAyOS45MDM5IDE1LjQzOTggMjkuOTAzOUw4LjY1MTczIDI5LjkwMDlaTTguNjUxNzMgMjQuNDcyOEgxMy43M0MxOC4yODk2IDI0LjQ3MjggMjAuNTY5NCAyMS43Mzc3IDIwLjU2OTQgMTcuMTA1OEMyMC41Njk0IDEyLjQ3MzggMTguMzQ2OSAxMC4wOTc1IDEzLjg5ODkgMTAuMDk3NUg4LjY1MTczVjI0LjQ3MjhaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNNzAuNzA2NiA0VjQ1LjUxMjZIOTYuNTcxM1YzNy44NTNINzkuNzE0MVY0SDcwLjcwNjZaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTAyLjU4NCA0VjQ1LjUxMjZIMTI4LjQ1MlYzNy44NTNIMTExLjU5MlY0SDEwMi41ODRaIiBmaWxsPSJ3aGl0ZSIvPgo8cGF0aCBkPSJNMTUxLjI3NCAzOS4zNzg5SDE0Ni43MTVDMTQyLjk1MSAzOS4zNzg5IDE0MS4wNjkgMzcuNzI5NCAxNDEuMDY5IDMzLjgyNzJDMTQxLjA2OSAyOS45MjUgMTQyLjk1MSAyOC4yNzU1IDE0Ni43MTUgMjguMjc1NUgxNTEuMjc0VjM5LjM3ODlaTTE1OS42MjEgMjIuMjIwMlYxNi40NTQ0SDE1MS4yNzRWMjIuMjIwMkgxNDUuODQ2QzE0My45NDYgMjIuMjIwMiAxNDIuNTIxIDIxLjY2MjMgMTQxLjU3IDIwLjU0NjVDMTQwLjYyIDE5LjQzMzggMTQwLjE0NCAxOC4yMzM2IDE0MC4xNDQgMTYuMzQ1OEMxNDAuMTQ0IDE0LjQ1ODEgMTQwLjYxMSAxMy4xOTQ1IDE0MS41NDMgMTEuOTUyMUMxNDIuNDc1IDEwLjcwOTcgMTQzLjk1NSAxMC4wODU1IDE0Ni4wMTggMTAuMDg1NUgxNTEuMjU5VjRIMTQ0LjUzNEMxNDIuMzQxIDMuOTU0NDIgMTQwLjE1OCA0LjMxMTEyIDEzOC4wOTMgNS4wNTI0NEMxMzYuMjY4IDUuNzU0MDcgMTM0Ljg1MiA2LjY4OTkxIDEzMy44NDcgNy44NTk5NkMxMzIuODg1IDguOTUxNTkgMTMyLjEzMSAxMC4yMDk2IDEzMS42MjEgMTEuNTcyMkMxMzEuMTQyIDEyLjkxMyAxMzAuOTAxIDE0LjMyNzYgMTMwLjkxIDE1Ljc1MThDMTMwLjkxIDE4LjQ4MTkgMTMxLjY0MiAyMC43MTM0IDEzMy4xMDUgMjIuNDQ2NEMxMzQuMzM3IDIzLjg3NTIgMTM1Ljk3NiAyNC44OTI4IDEzNy44MDMgMjUuMzYyNEMxMzcuODgxIDI1LjM4NzEgMTM3Ljk1IDI1LjQzNTMgMTM3Ljk5OSAyNS41MDA1QzEzOC4wNDkgMjUuNTY1NyAxMzguMDc3IDI1LjY0NDYgMTM4LjA3OSAyNS43MjYzQzEzOC4wODIgMjUuODA4MSAxMzguMDU5IDI1Ljg4ODYgMTM4LjAxNCAyNS45NTY4QzEzNy45NjkgMjYuMDI1MSAxMzcuOTA0IDI2LjA3NzcgMTM3LjgyOCAyNi4xMDczQzEzNi4wMTggMjYuNzU4NyAxMzQuNjI4IDI3LjcxNzYgMTMzLjY1NyAyOC45ODQyQzEzMi40NTIgMzAuNTQ3NyAxMzEuODE0IDMyLjQ3NDUgMTMxLjg0OCAzNC40NDg0QzEzMS44MzcgMzUuNzUxNCAxMzIuMDQ5IDM3LjA0NjcgMTMyLjQ3NSAzOC4yNzgyQzEzMi45NDIgMzkuNTU2MiAxMzMuNjI3IDQwLjc0MzcgMTM0LjQ5OCA0MS43ODg0QzEzNS40MjcgNDIuOTM4MyAxMzYuODE0IDQzLjg0MyAxMzguNjYgNDQuNTAyNEMxNDAuNzYyIDQ1LjIwNyAxNDIuOTY5IDQ1LjU0MzcgMTQ1LjE4NiA0NS40OTc1SDE1OS42MzNWMjguMjc4NUgxNjIuNTdWMjIuMjIwMkgxNTkuNjIxWiIgZmlsbD0id2hpdGUiLz4KPHBhdGggZD0iTTU1LjI4NDggNFYzMi43NjU3QzU1LjI4NDggMzQuODcwNiA1NC44MDAzIDM2LjUxNzEgNTMuODMxMyAzNy43MDUzQzUyLjg2MjMgMzguODkzNCA1MS40NjUxIDM5LjQ4NzUgNDkuNjM5NiAzOS40ODc1SDQ5LjAzNjVDNDcuMjExMSAzOS40ODc1IDQ1LjgxNDkgMzguODkzNCA0NC44NDc5IDM3LjcwNTNDNDMuODgwOSAzNi41MTcxIDQzLjM5NTQgMzQuODcwNiA0My4zOTEzIDMyLjc2NTdWNEgzNC4zMzI1VjMyLjM0NjZDMzQuMzMyNSAzNi43NTMzIDM1LjYzOTMgNDAuMjEyMiAzOC4yNTI4IDQyLjcyMzJDNDAuODY2MyA0NS4yMzQyIDQ0LjQ1NzggNDYuNDkwNyA0OS4wMjc1IDQ2LjQ5MjdINDkuNjMwNkM1NC4yMDIyIDQ2LjQ5MjcgNTcuNzkzOCA0NS4yMzYyIDYwLjQwNTMgNDIuNzIzMkM2My4wMTY4IDQwLjIxMDIgNjQuMzIzNiAzNi43NTEzIDY0LjMyNTYgMzIuMzQ2NlY0SDU1LjI4NDhaIiBmaWxsPSJ3aGl0ZSIvPgo8L2c+CjxkZWZzPgo8Y2xpcFBhdGggaWQ9ImNsaXAwXzk0OF8xMjEwIj4KPHJlY3Qgd2lkdGg9IjMwMCIgaGVpZ2h0PSI0Mi41MDQ3IiBmaWxsPSJ3aGl0ZSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCA0KSIvPgo8L2NsaXBQYXRoPgo8L2RlZnM+Cjwvc3ZnPgo=" alt="Pull&Bear" width="300" height="50"><span class="brand-name">BUS EMPLEADOS<small>A CORUÑA / NARÓN</small></span></a><nav class="main-nav" aria-label="Navegación principal"><button id="navRoutes" class="nav-button active">Horarios</button><button id="navStops" class="nav-button">Buscar parada</button></nav><div class="header-actions"><button id="helpButton" class="icon-button" aria-label="Ayuda" title="Ayuda">?</button><button id="themeButton" class="icon-button" aria-label="Apariencia" title="Apariencia" aria-haspopup="dialog" aria-controls="themeDialog"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="1.6"/><path d="M12 4a8 8 0 0 0 0 16Z" fill="currentColor"/></svg></button></div></header>
   <main id="main" class="workspace">
     <aside class="planner" aria-label="Seleccionar bus"><div class="planner-intro"><h1>Elige tu bus</h1></div>
-      <div class="planner-controls"><div class="direction-switch" aria-label="Sentido del viaje"><button data-direction="out" class="is-active" aria-pressed="true">Ida <span>→ Narón</span></button><button data-direction="back" aria-pressed="false">Vuelta <span>→ A Coruña</span></button></div><label class="field-label" for="shiftSelect">Tu horario de trabajo</label><div class="select-wrap"><select id="shiftSelect"><option value="early">08:30 — 17:45</option><option value="middle">09:00 — 18:15</option><option value="late">09:30 — 18:45</option></select><span id="shiftDays" hidden aria-hidden="true">L–V</span></div>
-        <div class="search-wrap"><label class="search-box"><svg class="ui-icon search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="m15.5 15.5 4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><input type="search" id="searchInput" placeholder="Nombre de parada" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="searchSuggestions" aria-label="Buscar por nombre de parada"><button id="clearSearch" hidden aria-label="Limpiar búsqueda">×</button></label><div id="searchSuggestions" class="search-suggestions" role="listbox" aria-label="Sugerencias de búsqueda" hidden></div></div>
+      <div class="planner-controls"><div class="direction-switch" aria-label="Sentido del viaje"><button data-direction="out" class="is-active" aria-pressed="true">Ida <span>Narón</span></button><button data-direction="back" aria-pressed="false">Vuelta <span>A Coruña</span></button></div><label class="field-label" for="shiftSelect">Tu horario de trabajo</label><div class="select-wrap"><select id="shiftSelect"><option value="early">08:30 — 17:45</option><option value="middle">09:00 — 18:15</option><option value="late">09:30 — 18:45</option></select><svg class="ui-icon shift-chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="shiftDays" hidden aria-hidden="true">L–V</span></div>
+        <div class="search-wrap"><label class="search-box"><svg class="ui-icon search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="m15.5 15.5 4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><input type="search" id="searchInput" placeholder="Buscar una parada" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="searchSuggestions" aria-label="Buscar por nombre de parada"><button id="clearSearch" hidden aria-label="Limpiar búsqueda">×</button></label><div id="searchSuggestions" class="search-suggestions" role="listbox" aria-label="Sugerencias de búsqueda" hidden></div></div>
       </div>
       <div class="list-heading"><span id="listTitle">BUSES DISPONIBLES</span><span id="resultCount" hidden aria-hidden="true">5</span></div><div id="resultList" class="result-list" aria-live="polite"></div><div class="planner-bottom"><button id="openAllStops">Ver todas las paradas <svg class="ui-icon all-stops-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><path d="M4 12h16m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
     </aside>
     <section class="workbench" aria-label="Bus y paradas">
       <header class="detail-header"><button id="mobileBack" class="icon-button mobile-back" aria-label="Volver a los buses">←</button><div class="route-badge" id="routeBadge">01</div><div class="detail-heading"><div class="micro" id="journeyDirection">Ida · A Coruña → Narón</div><h2 id="routeTitle">Bus 1</h2><p id="routeSubtitle">L–V · Turno 08:30–17:45</p></div><button id="weatherButton" class="weather-widget" aria-label="Tiempo actual de A Coruña"><span id="weatherIcon" aria-hidden="true">☁</span><span><strong id="weatherTemp">A Coruña</strong><small id="weatherCondition">Consultando el tiempo…</small></span></button></header>
       <div class="journey-bar" id="journeyBar"><div class="journey-schedule"><div class="journey-endpoint"><span class="micro">Salida</span><strong id="departureTime">07:40</strong><span id="departurePlace">Plaza Pontevedra</span></div><div class="journey-connector"><span id="journeyDuration" title="Duración prevista del servicio">50 min</span><i></i><small id="journeyStopCount">3 paradas</small></div><div class="journey-endpoint"><span class="micro">Llegada</span><strong id="arrivalTime">08:30</strong><span id="arrivalPlace">Sede Pull&Bear</span></div></div><button class="traffic-estimate" id="trafficEstimate" aria-label="Información de la estimación de carretera"><span class="micro">Google Maps · Consulta ⓘ</span><strong id="trafficTime">Sin estimación</strong><small id="trafficMeta" hidden>Consulta con fecha y hora</small></button></div>
-      <div class="detail-grid"><section class="stops-panel" aria-labelledby="stopsTitle"><div class="stops-panel-header"><div class="stops-title-line"><h3 id="stopsTitle">Todas las paradas</h3><span id="stopsCount">3</span></div><button id="openMap" class="secondary-button"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><circle cx="12" cy="12" r="6" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Ver mapa</button></div><div id="stopTimeline" class="stop-timeline"></div><div id="stopServices" class="stop-services" hidden></div><button id="reportButton" class="report-button"><span>¿Hay un dato incorrecto?</span><span class="report-link">Escríbenos ↗</span></button></section></div>
+      <div class="detail-grid"><section class="stops-panel" aria-labelledby="stopsTitle"><div class="stops-panel-header"><div class="stops-title-line"><h3 id="stopsTitle">Todas las paradas</h3><span id="stopsCount">3</span></div><button id="openMap" class="secondary-button"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><circle cx="12" cy="12" r="6" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Ver mapa</button></div><div id="stopTimeline" class="stop-timeline"></div><div id="stopServices" class="stop-services" hidden></div><button id="reportButton" class="report-button"><span>¿Hay un dato incorrecto?</span><span class="report-link">Reportar</span></button></section></div>
     </section>
   </main>
   <dialog id="mapDialog" class="app-dialog map-dialog" aria-labelledby="mapDialogTitle"><div class="dialog-top"><div><h2 id="mapDialogTitle">Mapa de paradas</h2></div><button id="closeMap" class="icon-button" aria-label="Cerrar mapa">×</button></div><section class="map-panel"><div class="map-toolbar"><span class="micro" id="mapStopTitle">Plaza Pontevedra</span><button class="text-button" id="mapOverview">Ver todas las paradas ↗</button></div><div class="google-map-wrap"><iframe id="googleMap" title="Google Maps: paradas de Bus Pull&Bear" src="about:blank" referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="map-loading" id="mapLoading">Cargando Google Maps…</div></div></section></dialog>
-  <dialog id="themeDialog" class="app-dialog theme-dialog" aria-labelledby="themeDialogTitle"><div class="dialog-top"><h2 id="themeDialogTitle">Apariencia</h2><button id="closeTheme" class="icon-button" aria-label="Cerrar apariencia">×</button></div><div class="theme-options" role="radiogroup" aria-label="Tema de la interfaz"><button class="theme-option" data-theme-choice="dark" role="radio" aria-checked="true" tabindex="0"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Oscuro</span><span class="theme-option-check" aria-hidden="true">✓</span></button><button class="theme-option" data-theme-choice="light" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Claro</span><span class="theme-option-check" aria-hidden="true">✓</span></button><button class="theme-option" data-theme-choice="ivory" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Marfil</span><span class="theme-option-check" aria-hidden="true">✓</span></button><button class="theme-option" data-theme-choice="forest" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Bosque</span><span class="theme-option-check" aria-hidden="true">✓</span></button><button class="theme-option" data-theme-choice="midnight" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Medianoche</span><span class="theme-option-check" aria-hidden="true">✓</span></button><button class="theme-option" data-theme-choice="plum" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Ciruela</span><span class="theme-option-check" aria-hidden="true">✓</span></button></div></dialog>
+  <dialog id="themeDialog" class="app-dialog theme-dialog" aria-labelledby="themeDialogTitle"><div class="dialog-top"><h2 id="themeDialogTitle">Apariencia</h2><button id="closeTheme" class="icon-button" aria-label="Cerrar apariencia"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div><div class="theme-options" role="radiogroup" aria-label="Tema de la interfaz"><button class="theme-option" data-theme-choice="dark" role="radio" aria-checked="true" tabindex="0"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Oscuro</span><span class="theme-option-check" aria-hidden="true">✓</span></button><button class="theme-option" data-theme-choice="light" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Claro</span><span class="theme-option-check" aria-hidden="true">✓</span></button><button class="theme-option" data-theme-choice="ivory" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Marfil</span><span class="theme-option-check" aria-hidden="true">✓</span></button><button class="theme-option" data-theme-choice="forest" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Bosque</span><span class="theme-option-check" aria-hidden="true">✓</span></button><button class="theme-option" data-theme-choice="midnight" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Medianoche</span><span class="theme-option-check" aria-hidden="true">✓</span></button><button class="theme-option" data-theme-choice="plum" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Ciruela</span><span class="theme-option-check" aria-hidden="true">✓</span></button><button class="theme-option" data-theme-choice="ocean" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Océano</span><span class="theme-option-check" aria-hidden="true">✓</span></button><button class="theme-option" data-theme-choice="clay" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Terracota</span><span class="theme-option-check" aria-hidden="true">✓</span></button><button class="theme-option" data-theme-choice="slate" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Pizarra</span><span class="theme-option-check" aria-hidden="true">✓</span></button><button class="theme-option" data-theme-choice="rose" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Rosa</span><span class="theme-option-check" aria-hidden="true">✓</span></button></div></dialog>
   <dialog id="appDialog" class="app-dialog" aria-labelledby="dialogTitle"><div class="dialog-top"><h2 id="dialogTitle"></h2><button id="closeDialog" class="icon-button" aria-label="Cerrar">×</button></div><div id="dialogBody"></div></dialog><div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script data-source="assets/data.js">
@@ -806,9 +852,14 @@ window.BUS_DATA = {
     },
     "grancanaria": {
       "id": "grancanaria",
-      "name": "Av. Gran Canaria",
+      "name": "Avenida Gran Canaria",
       "aliases": [
-        "av gran canaria"
+        "av gran canaria",
+        "Av. Gran Canaria",
+        "Av. Gran Canaria (Pza. Conservatorio)",
+        "Avenida Gran Canaria (Plaza Conservatorio)",
+        "Av. Gran Canaria (Pza. Náutica)",
+        "Avenida Gran Canaria (Plaza Náutica)"
       ],
       "points": {
         "out": [
@@ -823,10 +874,15 @@ window.BUS_DATA = {
     },
     "marina": {
       "id": "marina",
-      "name": "Av. Marina · Autoridad Portuaria",
+      "name": "Avenida Marina · Autoridad Portuaria",
       "aliases": [
         "heladeria colon",
-        "avenida marina"
+        "avenida marina",
+        "Av. Marina · Autoridad Portuaria",
+        "Heladería Colón – Aut. Portuaria",
+        "Heladería Colón – Autoridad Portuaria",
+        "Avenida Marina – Aut. Portuaria",
+        "Avenida Marina – Autoridad Portuaria"
       ],
       "points": {
         "out": [
@@ -973,7 +1029,7 @@ window.BUS_DATA = {
             {
               "id": "grancanaria",
               "time": "07:32",
-              "label": "Av. Gran Canaria (Pza. Conservatorio)"
+              "label": "Avenida Gran Canaria (Plaza Conservatorio)"
             },
             {
               "id": "gregorio",
@@ -1018,7 +1074,7 @@ window.BUS_DATA = {
             {
               "id": "marina",
               "time": "07:30",
-              "label": "Heladería Colón – Aut. Portuaria"
+              "label": "Heladería Colón – Autoridad Portuaria"
             },
             {
               "id": "ourense",
@@ -1145,7 +1201,7 @@ window.BUS_DATA = {
             {
               "id": "grancanaria",
               "time": "18:50",
-              "label": "Av. Gran Canaria (Pza. Náutica)"
+              "label": "Avenida Gran Canaria (Plaza Náutica)"
             },
             {
               "id": "rosales",
@@ -1175,7 +1231,7 @@ window.BUS_DATA = {
             {
               "id": "marina",
               "time": "18:36",
-              "label": "Avenida Marina – Aut. Portuaria"
+              "label": "Avenida Marina – Autoridad Portuaria"
             },
             {
               "id": "real",
@@ -1401,7 +1457,7 @@ window.BUS_DATA = {
 <script data-source="assets/core.js">
 (function(root,factory){const api=factory();if(typeof module==='object'&&module.exports)module.exports=api;else root.BusCore=api;})(typeof window!=='undefined'?window:this,function(){
   'use strict';
-  const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim();
+  const normalize=s=>String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\b(?:av|avda|avd)\b/g,'avenida').replace(/\b(?:plz|pza|pz|pl)\b/g,'plaza');
   const minutes=t=>{const [h,m]=t.split(':').map(Number);return h*60+m;};
   const duration=r=>minutes(r.stops.at(-1).time)-minutes(r.stops[0].time);
   const key=(shift,direction,id)=>`${shift}:${direction}:${id}`;
@@ -1752,7 +1808,7 @@ window.BUS_NOTICES=[];
   function mobileDetail(){if(window.matchMedia('(max-width:760px)').matches){const workspace=$('.workspace'),revealing=!workspace.classList.contains('mobile-detail');workspace.classList.add('mobile-detail');if(revealing)animateDetail(true);window.scrollTo({top:0,behavior:'instant'});$('#mobileBack').focus({preventScroll:true});}}
   function closeSuggestions(){suggestions.open=false;suggestions.active=-1;$('#searchSuggestions').hidden=true;$('#searchInput').setAttribute('aria-expanded','false');$('#searchInput').removeAttribute('aria-activedescendant');}
   function setMode(mode){closeSuggestions();state.mode=mode;state.query='';$('#searchInput').value='';state.servicesOpen=mode!=='routes';if(mode==='routes'&&!currentRoute().stops.some(s=>s.id===state.stopId))state.stopId=currentRoute().stops[0].id;$('.workspace').classList.remove('mobile-detail');render();}
-  function setRoute(shift,direction,id,stopId){closeSuggestions();state.shift=shift;state.direction=direction;state.routeId=Number(id);state.mode='routes';state.servicesOpen=false;const route=currentRoute();if(state.query&&!C.routeMatches(D,route,state.query)){state.query='';$('#searchInput').value='';}state.stopId=stopId||route.stops[0].id;render();mobileDetail();}
+  function setRoute(shift,direction,id,stopId){closeSuggestions();state.shift=shift;state.direction=direction;state.routeId=Number(id);state.mode='routes';state.servicesOpen=false;const route=currentRoute();if(state.query&&!C.routeMatches(D,route,state.query)){state.query='';$('#searchInput').value='';}state.stopId=stopId||route.stops[0].id;lastDetailKey='';render();mobileDetail();}
   function chooseStop(id,fromPlanner=false){closeSuggestions();state.stopId=id;state.servicesOpen=true;renderDetail();if(state.mode!=='routes')renderResults();renderMap();if(fromPlanner)mobileDetail();}
   function renderControls(){const nonRoutes=state.mode!=='routes';$('.planner').classList.toggle('is-stop-mode',nonRoutes);$('.planner-intro h1').textContent=nonRoutes?'Busca tu parada':'Elige tu bus';$('#navRoutes').classList.toggle('active',!nonRoutes);$('#navStops').classList.toggle('active',nonRoutes);$('#shiftSelect').value=state.shift;$('#shiftDays').textContent=currentShift().shortDays;$$('[data-direction]').forEach(b=>{const on=b.dataset.direction===state.direction;b.classList.toggle('is-active',on);b.setAttribute('aria-pressed',on);});$('#clearSearch').hidden=!state.query;$('#listTitle').textContent=nonRoutes?'PARADAS DEL SERVICIO':'BUSES DISPONIBLES';}
   function renderResults(){if(state.mode!=='routes')return renderStopResults();const routes=D.routes[state.shift][state.direction].filter(r=>C.routeMatches(D,r,state.query));$('#resultCount').textContent=routes.length;
@@ -1760,7 +1816,7 @@ window.BUS_NOTICES=[];
     $('#resultList').innerHTML=routes.map(r=>{const selected=r.id===state.routeId,match=state.query?C.matchingStop(D,r,state.query):-1;return `<article class="route-result ${selected?'selected':''}"><button class="route-pick" data-pick-route="${r.id}" aria-pressed="${selected}"><span class="route-pick-top"><span class="line-label">Bus ${r.id}</span><span class="route-minutes">${r.stops.length} paradas · ${C.duration(r)} min</span></span><strong>${esc(state.direction==='out'?routeOrigin(r):destination(r))}</strong><span class="route-times"><span>${r.stops[0].time}</span><span>→</span><span>${r.stops.at(-1).time}</span></span>${match>=0?`<span class="route-match">${r.stops[match].time} · ${esc(D.stops[r.stops[match].id].name)}</span>`:''}</button></article>`;}).join('');$$('[data-pick-route]').forEach(b=>b.onclick=()=>{const id=Number(b.dataset.pickRoute),r=D.routes[state.shift][state.direction].find(x=>x.id===id),match=state.query?C.matchingStop(D,r,state.query):-1;setRoute(state.shift,state.direction,id,match>=0?r.stops[match].id:undefined);});
   }
   function renderStopResults(){const stops=Object.values(D.stops).filter(s=>C.services(D,s.id).length&&C.stopMatches(D,s.id,state.query)).sort((a,b)=>a.name.localeCompare(b.name,'es'));$('#resultCount').textContent=stops.length;$('#resultList').innerHTML=stops.length?stops.map(s=>{const services=C.services(D,s.id),buses=[...new Set(services.map(x=>x.route.id))].sort((a,b)=>a-b);return `<button class="stop-result ${state.stopId===s.id?'selected':''}" data-pick-stop="${s.id}" aria-pressed="${state.stopId===s.id}"><span>⌖</span><div><strong>${esc(s.name)}</strong><small>${services.length} horarios · Ida y vuelta</small><div class="bus-chips">${buses.map(b=>`<span>BUS ${b}</span>`).join('')}</div></div><span aria-hidden="true">›</span></button>`;}).join(''):'<div class="empty-state"><strong>No hay paradas con ese nombre.</strong></div>';$$('[data-pick-stop]').forEach(b=>b.onclick=()=>chooseStop(b.dataset.pickStop,true));}
-  function serviceMarkup(stopId){const services=C.services(D,stopId);return `<div class="service-groups">${['out','back'].map(direction=>{const list=services.filter(s=>s.direction===direction);return `<section><div class="service-group-label">${directionName(direction)}</div>${list.length?list.map(s=>`<button class="service-row" data-service="${s.key}"><span class="service-bus">Bus ${s.route.id}</span><div><strong>${s.stop.time}</strong><small>Turno ${s.shift.start}–${s.shift.end} · ${s.shift.shortDays}</small></div><span>↗</span></button>`).join(''):'<p class="service-empty">Sin paso por esta parada en este sentido.</p>'}</section>`;}).join('')}</div>`;}
+  function serviceMarkup(stopId){const services=C.services(D,stopId);return `<div class="service-groups">${['out','back'].map(direction=>{const list=services.filter(s=>s.direction===direction);return `<section><div class="service-group-label">${directionName(direction)}</div>${list.length?list.map(s=>`<button class="service-row" data-service="${s.key}"><span class="service-bus">Bus ${s.route.id}</span><div><strong>${s.stop.time}</strong><small>Turno ${s.shift.start}–${s.shift.end} · ${s.shift.shortDays}</small></div></button>`).join(''):'<p class="service-empty">Sin paso por esta parada en este sentido.</p>'}</section>`;}).join('')}</div>`;}
   function wireServices(){ $$('[data-service]').forEach(b=>b.onclick=()=>{const [shift,direction,id]=b.dataset.service.split(':');setRoute(shift,direction,id,state.stopId);});}
   function animateDetail(force=false){
     const workbench=$('.workbench');if(!workbench?.getClientRects().length)return;
@@ -1769,11 +1825,11 @@ window.BUS_NOTICES=[];
     if(window.matchMedia('(prefers-reduced-motion:reduce)').matches){animations.forEach(animation=>animation.cancel());animations.clear();lastDetailKey=key;return;}
     if(!force&&key===lastDetailKey)return;lastDetailKey=key;
     const groups=[['#routeBadge','.detail-heading'],['#journeyBar'],['.detail-grid']],starts=new Map();
-    groups.flat().forEach(selector=>{const element=$(selector);if(element&&animations.has(element)){const style=getComputedStyle(element);starts.set(element,{opacity:style.opacity,transform:style.transform});}});
+    groups.flat().forEach(selector=>{const element=$(selector);if(element&&!element.hidden&&element.getClientRects().length){const style=getComputedStyle(element);starts.set(element,{opacity:style.opacity,transform:style.transform});}});
     animations.forEach(animation=>animation.cancel());animations.clear();
     groups.forEach((selectors,index)=>selectors.forEach(selector=>{
       const element=$(selector);if(!element||element.hidden||!element.getClientRects().length||!element.animate)return;
-      const animation=element.animate([starts.get(element)||{opacity:.2,transform:'translate3d(0,18px,0)'},{opacity:1,transform:'translate3d(0,0,0)'}],{duration:600,delay:index*35,fill:'backwards',easing:'cubic-bezier(.18,.72,.24,1)'});
+      const animation=element.animate([{...(starts.get(element)||{opacity:1,transform:'none'}),offset:0,easing:'cubic-bezier(.4,0,.4,1)'},{opacity:.8,transform:'translate3d(0,6px,0)',offset:.22,easing:'cubic-bezier(.2,0,.2,1)'},{opacity:1,transform:'translate3d(0,0,0)',offset:1}],{duration:600,delay:index*20,fill:'backwards',easing:'linear'});
       animations.set(element,animation);const release=()=>{if(animations.get(element)===animation)animations.delete(element);};animation.onfinish=release;animation.oncancel=release;
     }));
   }
@@ -1785,7 +1841,7 @@ window.BUS_NOTICES=[];
     const opacity=panel.hidden ? .7 : parseFloat(getComputedStyle(panel).opacity)||1;
     panel.getAnimations().forEach(animation=>animation.cancel());
     panel.hidden=false;panel.inert=!open;panel.setAttribute('aria-hidden',String(!open));panel.style.height=from+'px';
-    if(open){panel.innerHTML=`<div class="inline-services-content"><div class="inline-services-top"><div><strong>Buses de esta parada</strong></div><button class="close-stop" aria-label="Cerrar horarios de esta parada">×</button></div>${serviceMarkup(stopId)}</div>`;panel.querySelector('.close-stop').onclick=()=>{state.servicesOpen=false;renderDetail();$(`[data-timeline-stop="${stopId}"]`)?.focus({preventScroll:true});};}
+    if(open){panel.innerHTML=`<div class="inline-services-content"><div class="inline-services-top"><div><strong>Buses de esta parada</strong></div></div>${serviceMarkup(stopId)}</div>`;}
     const target=open?panel.scrollHeight:0;
     panel.style.height=target+'px';panel.style.overflow='hidden';
     const finish=()=>{panel.style.height='';panel.style.overflow='';if(!open){panel.hidden=true;panel.innerHTML='';}};
