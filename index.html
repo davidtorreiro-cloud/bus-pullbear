@@ -7,14 +7,15 @@
   <script data-source="assets/appearance.js">
 (function(){
   'use strict';
-  const themes=[['dark','Oscuro'],['light','Claro'],['ivory','Marfil'],['forest','Bosque'],['midnight','Medianoche'],['plum','Ciruela'],['ocean','Océano'],['clay','Terracota'],['slate','Pizarra'],['rose','Rosa']];
+  const themes=[['dark','Oscuro'],['light','Claro'],['ivory','Marfil'],['forest','Bosque'],['midnight','Medianoche'],['plum','Ciruela'],['ocean','Océano'],['clay','Terracota'],['retro','Retro'],['rose','Rosa']];
   const root=document.documentElement;
   let selected='dark';
-  try{const saved=JSON.parse(localStorage.getItem('pb-v2-theme'));if(themes.some(([id])=>id===saved))selected=saved;}catch{}
+  try{const saved=JSON.parse(localStorage.getItem('pb-v2-theme')),restored=saved==='slate'?'retro':saved;if(themes.some(([id])=>id===restored))selected=restored;if(saved==='slate')localStorage.setItem('pb-v2-theme',JSON.stringify('retro'));}catch{}
   root.dataset.theme=selected;
   const dismissDialog=dialog=>window.BusMotion?.closeDialog(dialog)||dialog.close();
 
   function applyTheme(id){
+    if(id==='slate')id='retro';
     if(!themes.some(([value])=>value===id))return;
     selected=id;
     root.dataset.theme=id;
@@ -264,14 +265,14 @@ body{font-size:14px}.micro{font-size:11px;letter-spacing:.4px;text-transform:non
   --warn:#775015;--warn-bg:#ffe8b9;
   --light-button:#623320;--light-text:#fff9f5;
 }
-:root[data-theme="slate"]{
+:root[data-theme="retro"]{
   color-scheme:dark;
-  --bg:#252f3a;--panel:#303d49;--elevated:#3b4a58;--hover:#46596a;
-  --border:#7c91a3;--border-soft:#506477;
-  --fg:#f7fafc;--muted:#d5e1e9;--quiet:#c3d3df;
-  --accent:#c7dd9b;--accent-tint:#c7dd9b18;--accent-line:#a5bf7b;
-  --warn:#ffe0a2;--warn-bg:#ffe0a214;
-  --light-button:#eff4f8;--light-text:#25303b;
+  --bg:#030806;--panel:#07120b;--elevated:#0d1e12;--hover:#132c1b;
+  --border:#3a8050;--border-soft:#1d492b;
+  --fg:#bdffcd;--muted:#9cdeb0;--quiet:#82c995;
+  --accent:#68ff8d;--accent-tint:#68ff8d18;--accent-line:#42cc68;
+  --warn:#f4e291;--warn-bg:#f4e29112;
+  --light-button:#68ff8d;--light-text:#031008;
 }
 :root[data-theme="rose"]{
   color-scheme:light;
@@ -285,7 +286,7 @@ body{font-size:14px}.micro{font-size:11px;letter-spacing:.4px;text-transform:non
 
 [data-theme="dark"] .brand-logo,[data-theme="forest"] .brand-logo,
 [data-theme="midnight"] .brand-logo,[data-theme="plum"] .brand-logo,
-[data-theme="ocean"] .brand-logo,[data-theme="slate"] .brand-logo{filter:none}
+[data-theme="ocean"] .brand-logo,[data-theme="retro"] .brand-logo{filter:none}
 [data-theme="light"] .brand-logo,[data-theme="ivory"] .brand-logo,
 [data-theme="clay"] .brand-logo,[data-theme="rose"] .brand-logo{filter:invert(1)}
 
@@ -326,7 +327,7 @@ body{font-size:14px}.micro{font-size:11px;letter-spacing:.4px;text-transform:non
 [data-theme-choice="plum"]{--preview-bg:#1a111e;--preview-panel:#33233d;--preview-border:#80638f;--preview-accent:#e4b5f0}
 [data-theme-choice="ocean"]{--preview-bg:#0b272e;--preview-panel:#18444c;--preview-border:#598c97;--preview-accent:#7ee7e1}
 [data-theme-choice="clay"]{--preview-bg:#f2e4db;--preview-panel:#fff8f3;--preview-border:#a8806b;--preview-accent:#9a3f27}
-[data-theme-choice="slate"]{--preview-bg:#252f3a;--preview-panel:#3b4a58;--preview-border:#7c91a3;--preview-accent:#c7dd9b}
+[data-theme-choice="retro"]{--preview-bg:#030806;--preview-panel:#0d1e12;--preview-border:#3a8050;--preview-accent:#68ff8d}
 [data-theme-choice="rose"]{--preview-bg:#f8e9ee;--preview-panel:#fff9fb;--preview-border:#b78396;--preview-accent:#a33864}
 
 @media(max-width:380px){
@@ -565,6 +566,39 @@ dialog.is-closing::backdrop{animation:bus-backdrop-exit var(--motion-dialog-clos
 .report-button:hover .report-link{text-decoration-color:currentColor}
 .journey-duration .micro{text-transform:none}
 .journey-duration:hover strong{text-decoration:none}
+.route-result.selected:before{display:none}
+
+/* Shared slots keep the header stable when the view and title change. */
+.workbench,.result-list{scrollbar-gutter:stable}
+.workbench{overflow-anchor:none}
+.detail-header{display:grid;grid-template-columns:44px minmax(0,1fr) 200px;grid-template-areas:"badge heading weather";align-items:center;column-gap:14px;row-gap:0;min-height:104px;padding:0 0 22px}
+.detail-header>.route-badge{grid-area:badge;align-self:center}
+.detail-header>.detail-heading{grid-area:heading;display:grid;grid-template-rows:15px 35px 18px;row-gap:7px;min-width:0;align-content:center}
+.detail-heading>.micro{line-height:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.detail-heading>h2{margin:0;font-size:33px;line-height:35px;min-width:0}
+.detail-heading>p{margin:0;line-height:18px;min-height:18px}
+.detail-heading>.is-reserved{visibility:hidden;pointer-events:none}
+.detail-header>.weather-widget{grid-area:weather;justify-self:end;align-self:center;width:200px;min-height:52px;margin:0;padding:7px 0 7px 16px;gap:10px;border-left:1px solid var(--border-soft)}
+.weather-widget>span:first-child{width:30px;min-width:30px;flex:none;line-height:1}
+.weather-widget>span:last-child{min-width:0;flex:1;display:block}
+.weather-widget strong,.weather-widget small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+@media(min-width:761px) and (max-width:1150px){
+ .detail-header{grid-template-columns:44px minmax(0,1fr) 180px}
+ .detail-header>.weather-widget{width:180px}
+}
+@media(max-width:760px){
+ html{scrollbar-gutter:stable}
+ .detail-header{grid-template-columns:29px 36px minmax(0,1fr);grid-template-areas:"back badge heading" ". weather weather";column-gap:10px;row-gap:14px;min-height:0;padding-bottom:22px}
+ .detail-header>.mobile-back{grid-area:back}
+ .detail-header>.detail-heading{grid-template-rows:14px 32px 17px;row-gap:6px}
+ .detail-heading>.micro{line-height:14px}
+ .detail-heading>h2{font-size:30px;line-height:32px}
+ .detail-heading>p{line-height:17px;min-height:17px}
+ .detail-header>.weather-widget{width:100%;min-height:34px;margin:0;padding:0;border:0;gap:8px}
+ .weather-widget>span:last-child{display:flex;align-items:center;gap:9px;flex-wrap:nowrap}
+ .weather-widget strong{flex:none}
+ .weather-widget small{flex:1;min-width:0;margin:0}
+}
 @media(prefers-reduced-motion:reduce){.ui-icon{transition:none}}
 
 </style>
@@ -588,7 +622,7 @@ dialog.is-closing::backdrop{animation:bus-backdrop-exit var(--motion-dialog-clos
     </section>
   </main>
   <dialog id="mapDialog" class="app-dialog map-dialog" aria-labelledby="mapDialogTitle"><div class="dialog-top"><div><h2 id="mapDialogTitle">Mapa de paradas</h2></div><button id="closeMap" class="icon-button" aria-label="Cerrar mapa"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div><section class="map-panel"><div class="map-toolbar"><span class="micro" id="mapStopTitle">Plaza Pontevedra</span><button class="text-button" id="mapOverview">Ver todas las paradas ↗</button></div><div class="google-map-wrap"><iframe id="googleMap" title="Google Maps: paradas de Bus Pull&Bear" src="about:blank" referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="map-loading" id="mapLoading">Cargando Google Maps…</div></div></section></dialog>
-  <dialog id="themeDialog" class="app-dialog theme-dialog" aria-labelledby="themeDialogTitle"><div class="dialog-top"><h2 id="themeDialogTitle">Apariencia</h2><button id="closeTheme" class="icon-button" aria-label="Cerrar apariencia"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div><div class="theme-options" role="radiogroup" aria-label="Tema de la interfaz"><button class="theme-option" data-theme-choice="dark" role="radio" aria-checked="true" tabindex="0"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Oscuro</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="light" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Claro</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="ivory" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Marfil</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="forest" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Bosque</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="midnight" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Medianoche</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="plum" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Ciruela</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="ocean" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Océano</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="clay" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Terracota</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="slate" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Pizarra</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="rose" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Rosa</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button></div></dialog>
+  <dialog id="themeDialog" class="app-dialog theme-dialog" aria-labelledby="themeDialogTitle"><div class="dialog-top"><h2 id="themeDialogTitle">Apariencia</h2><button id="closeTheme" class="icon-button" aria-label="Cerrar apariencia"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button></div><div class="theme-options" role="radiogroup" aria-label="Tema de la interfaz"><button class="theme-option" data-theme-choice="dark" role="radio" aria-checked="true" tabindex="0"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Oscuro</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="light" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Claro</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="ivory" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Marfil</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="forest" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Bosque</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="midnight" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Medianoche</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="plum" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Ciruela</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="ocean" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Océano</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="clay" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Terracota</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="retro" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Retro</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button><button class="theme-option" data-theme-choice="rose" role="radio" aria-checked="false" tabindex="-1"><span class="theme-preview" aria-hidden="true"><i></i><i></i><i></i></span><span class="theme-option-name">Rosa</span><span class="theme-option-check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4 10-10"/></svg></span></button></div></dialog>
   <dialog id="appDialog" class="app-dialog" aria-labelledby="dialogTitle"><div class="dialog-top"><h2 id="dialogTitle"></h2><button id="closeDialog" class="icon-button" aria-label="Cerrar"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div><div id="dialogBody"></div></dialog><div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 <script data-source="assets/data.js">
@@ -1686,7 +1720,7 @@ window.BUS_NOTICES=[];
   const state={shift:'early',direction:'out',routeId:1,stopId:'pontevedra',query:'',mode:'routes',servicesOpen:false,weather:null,noticeIndex:0};
   const suggestions={open:false,local:[],active:-1};
   let mapTimer,lastMapKey='',lastDetailKey='',lastFocused=null;
-  const detailMotion={epoch:0,phase:'idle',animations:[],gridWasInert:false};
+  const detailMotion={epoch:0,phase:'idle',animations:[],gridWasInert:false,includeWeather:false};
   const detailMotionPreference=window.matchMedia('(prefers-reduced-motion:reduce)');
   const noticeMotion=window.matchMedia('(prefers-reduced-motion:reduce)');
   let noticePaused=noticeMotion.matches,noticeHovered=false,noticeFocused=false,noticeTimer=null;
@@ -1697,9 +1731,9 @@ window.BUS_NOTICES=[];
   const formatTime=t=>new Intl.DateTimeFormat('es-ES',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Madrid'}).format(new Date(t));
   function mobileDetail(){if(window.matchMedia('(max-width:760px)').matches){const workspace=$('.workspace'),revealing=!workspace.classList.contains('mobile-detail');workspace.classList.add('mobile-detail');if(revealing)animateDetail();window.scrollTo({top:0,behavior:'instant'});$('#mobileBack').focus({preventScroll:true});}}
   function closeSuggestions(){suggestions.open=false;suggestions.active=-1;$('#searchSuggestions').hidden=true;$('#searchInput').setAttribute('aria-expanded','false');$('#searchInput').removeAttribute('aria-activedescendant');}
-  function setMode(mode){closeSuggestions();state.mode=mode;state.query='';$('#searchInput').value='';state.servicesOpen=mode!=='routes';if(mode==='routes'&&!currentRoute().stops.some(s=>s.id===state.stopId))state.stopId=currentRoute().stops[0].id;$('.workspace').classList.remove('mobile-detail');render();}
+  function setMode(mode){closeSuggestions();state.mode=mode;state.query='';$('#searchInput').value='';state.servicesOpen=mode!=='routes';if(mode==='routes'&&!currentRoute().stops.some(s=>s.id===state.stopId))state.stopId=currentRoute().stops[0].id;$('.workspace').classList.remove('mobile-detail');render(true);}
   function setRoute(shift,direction,id,stopId){closeSuggestions();state.shift=shift;state.direction=direction;state.routeId=Number(id);state.mode='routes';state.servicesOpen=false;const route=currentRoute();if(state.query&&!C.routeMatches(D,route,state.query)){state.query='';$('#searchInput').value='';}state.stopId=stopId||route.stops[0].id;render(true);mobileDetail();}
-  function chooseStop(id,fromPlanner=false){closeSuggestions();state.stopId=id;state.servicesOpen=true;renderDetail();if(state.mode!=='routes')renderResults();renderMap();if(fromPlanner)mobileDetail();}
+  function chooseStop(id,fromPlanner=false){closeSuggestions();state.stopId=id;state.servicesOpen=true;if(state.mode==='routes')renderDetail();else transitionDetail();if(state.mode!=='routes')renderResults();renderMap();if(fromPlanner)mobileDetail();}
   function renderControls(){const nonRoutes=state.mode!=='routes';$('.planner').classList.toggle('is-stop-mode',nonRoutes);$('.planner-intro h1').textContent=nonRoutes?'Busca tu parada':'Elige tu bus';$('#navRoutes').classList.toggle('active',!nonRoutes);$('#navStops').classList.toggle('active',nonRoutes);$('#shiftSelect').value=state.shift;$('#shiftDays').textContent=currentShift().shortDays;$$('[data-direction]').forEach(b=>{const on=b.dataset.direction===state.direction;b.classList.toggle('is-active',on);b.setAttribute('aria-pressed',on);});$('#clearSearch').hidden=!state.query;$('#listTitle').textContent=nonRoutes?'PARADAS DEL SERVICIO':'BUSES DISPONIBLES';}
   function renderResults(){if(state.mode!=='routes')return renderStopResults();const routes=D.routes[state.shift][state.direction].filter(r=>C.routeMatches(D,r,state.query));$('#resultCount').textContent=routes.length;
     if(!routes.length){const others=C.allRoutes(D).filter(s=>s.direction===state.direction&&s.shift.id!==state.shift&&C.routeMatches(D,s.route,state.query));$('#resultList').innerHTML=`<div class="empty-state"><strong>No hay coincidencias en este turno.</strong>Busca por el nombre de una parada o selecciona otro horario.${others.map(s=>`<button class="other-route" data-other-shift="${s.shift.id}" data-other-bus="${s.route.id}">Bus ${s.route.id} · Turno ${s.shift.start}–${s.shift.end} →</button>`).join('')}</div>`;$$('[data-other-shift]').forEach(b=>b.onclick=()=>setRoute(b.dataset.otherShift,state.direction,b.dataset.otherBus));return;}
@@ -1710,21 +1744,21 @@ window.BUS_NOTICES=[];
   function wireServices(){ $$('[data-service]').forEach(b=>b.onclick=()=>{const [shift,direction,id]=b.dataset.service.split(':');setRoute(shift,direction,id,state.stopId);});}
   function detailKey(){return [state.mode,state.shift,state.direction,state.routeId,state.mode==='stops'?state.stopId:''].join(':');}
   function detailIsVisible(){return Boolean($('.workbench')?.getClientRects().length);}
-  function detailElements(){return [['#routeBadge','.detail-heading'],['#journeyBar'],['.detail-grid']].flatMap((selectors,group)=>selectors.map(selector=>({element:$(selector),group}))).filter(({element})=>element&&!element.hidden&&element.getClientRects().length&&element.animate);}
+  function detailElements(){return [['#routeBadge','.detail-heading',...(detailMotion.includeWeather?['#weatherButton']:[])],['#journeyBar'],['.detail-grid']].flatMap((selectors,group)=>selectors.map(selector=>({element:$(selector),group}))).filter(({element})=>element&&!element.hidden&&element.getClientRects().length&&element.animate);}
   function cancelDetailAnimations(){detailMotion.animations.forEach(animation=>animation.cancel());detailMotion.animations=[];}
   function unlockDetail(){const grid=$('.detail-grid');if(grid)grid.inert=detailMotion.gridWasInert;$('.workbench')?.removeAttribute('aria-busy');}
-  function cancelDetailTransition(){detailMotion.epoch++;cancelDetailAnimations();detailMotion.phase='idle';unlockDetail();}
-  function finishDetailTransition(epoch){if(epoch!==detailMotion.epoch)return;cancelDetailAnimations();detailMotion.phase='idle';unlockDetail();}
+  function cancelDetailTransition(){detailMotion.epoch++;cancelDetailAnimations();detailMotion.phase='idle';unlockDetail();detailMotion.includeWeather=false;}
+  function finishDetailTransition(epoch){if(epoch!==detailMotion.epoch)return;cancelDetailAnimations();detailMotion.phase='idle';unlockDetail();detailMotion.includeWeather=false;}
   function enterDetail(epoch){
     if(epoch!==detailMotion.epoch)return;
     if(detailMotionPreference.matches||!detailIsVisible()){finishDetailTransition(epoch);return;}
     cancelDetailAnimations();detailMotion.phase='entering';
     const grid=$('.detail-grid');if(grid)grid.inert=detailMotion.gridWasInert;
     $('.workbench').setAttribute('aria-busy','true');
-    const animations=detailElements().map(({element,group})=>element.animate([
+    const animations=detailElements().map(({element,group})=>{const opacity=getComputedStyle(element).opacity;return element.animate([
       {opacity:0,transform:'translate3d(0,14px,0)'},
-      {opacity:1,transform:'translate3d(0,0,0)'}
-    ],{duration:440,delay:group*20,easing:'cubic-bezier(.22,1,.36,1)',fill:'both'}));
+      {opacity,transform:'translate3d(0,0,0)'}
+    ],{duration:440,delay:group*20,easing:'cubic-bezier(.22,1,.36,1)',fill:'both'});});
     detailMotion.animations=animations;
     Promise.all(animations.map(animation=>animation.finished.catch(()=>null))).then(()=>finishDetailTransition(epoch));
   }
@@ -1733,8 +1767,10 @@ window.BUS_NOTICES=[];
     if(detailMotionPreference.matches||!detailIsVisible()||!detailElements().length){renderDetail();return;}
     // Further selections update state and the sidebar while this one exit completes.
     if(detailMotion.phase==='exiting')return;
+    const includeWeather=detailMotion.includeWeather||Boolean(lastDetailKey&&lastDetailKey.split(':')[0]!==state.mode);
+    detailMotion.includeWeather=includeWeather;
     const starts=detailElements().map(({element})=>{const style=getComputedStyle(element);return {element,opacity:style.opacity,transform:style.transform};});
-    cancelDetailTransition();const epoch=detailMotion.epoch;
+    cancelDetailTransition();const epoch=detailMotion.epoch;detailMotion.includeWeather=includeWeather;
     detailMotion.phase='exiting';$('.workbench').setAttribute('aria-busy','true');
     const grid=$('.detail-grid');detailMotion.gridWasInert=!!grid?.inert;if(grid)grid.inert=true;
     const animations=starts.map(({element,opacity,transform})=>element.animate([
@@ -1752,7 +1788,7 @@ window.BUS_NOTICES=[];
     if(detailMotion.phase==='entering'&&detailKey()===lastDetailKey){paintDetail();return;}
     cancelDetailTransition();paintDetail();
   }
-  function paintDetail(){const r=currentRoute(),shift=currentShift(),stop=D.stops[state.stopId],overview=state.mode!=='routes';$('#routeBadge').innerHTML=overview?ICON_LOCATION:String(r.id).padStart(2,'0');$('#journeyDirection').textContent=overview?'Todos los turnos · Ida y vuelta':`${directionName(state.direction)} · ${state.direction==='out'?'A Coruña → Narón':'Narón → A Coruña'}`;$('#routeTitle').textContent=overview?stop.name:`Bus ${r.id}`;$('#routeSubtitle').textContent=`${shift.shortDays} · Turno ${shift.start}–${shift.end}`;$('#routeSubtitle').hidden=overview;$('#journeyBar').hidden=overview;$('#departureTime').textContent=r.stops[0].time;$('#arrivalTime').textContent=r.stops.at(-1).time;$('#departurePlace').textContent=routeOrigin(r);$('#arrivalPlace').textContent=destination(r);$('#journeyDuration').textContent=C.duration(r)+' min';$('#journeyStopCount').textContent=r.stops.length+' paradas';renderJourneyDuration(r);$('#mapStopTitle').textContent=stop.name;$('#stopsTitle').textContent=overview?'Buses de esta parada':'Todas las paradas';$('#stopsCount').textContent=overview?C.services(D,state.stopId).length:r.stops.length;
+  function paintDetail(){const workbench=$('.workbench');if(lastDetailKey&&lastDetailKey.split(':')[0]!==state.mode)workbench.scrollTop=0;const r=currentRoute(),shift=currentShift(),stop=D.stops[state.stopId],overview=state.mode!=='routes';$('#routeBadge').innerHTML=overview?ICON_LOCATION:String(r.id).padStart(2,'0');$('#journeyDirection').textContent=overview?'Todos los turnos · Ida y vuelta':`${directionName(state.direction)} · ${state.direction==='out'?'A Coruña → Narón':'Narón → A Coruña'}`;$('#routeTitle').textContent=overview?stop.name:`Bus ${r.id}`;$('#routeSubtitle').textContent=`${shift.shortDays} · Turno ${shift.start}–${shift.end}`;$('#routeSubtitle').hidden=false;$('#routeSubtitle').classList.toggle('is-reserved',overview);$('#routeSubtitle').setAttribute('aria-hidden',String(overview));$('#journeyBar').hidden=overview;$('#departureTime').textContent=r.stops[0].time;$('#arrivalTime').textContent=r.stops.at(-1).time;$('#departurePlace').textContent=routeOrigin(r);$('#arrivalPlace').textContent=destination(r);$('#journeyDuration').textContent=C.duration(r)+' min';$('#journeyStopCount').textContent=r.stops.length+' paradas';renderJourneyDuration(r);$('#mapStopTitle').textContent=stop.name;$('#stopsTitle').textContent=overview?'Buses de esta parada':'Todas las paradas';$('#stopsCount').textContent=overview?C.services(D,state.stopId).length:r.stops.length;
     $('#stopTimeline').hidden=overview;$('#stopServices').hidden=!overview;if(overview){$('#stopServices').innerHTML=serviceMarkup(state.stopId);wireServices();}else renderTimeline();lastDetailKey=detailKey();
   }
   function transitionStopPanel(panel,open,stopId){
