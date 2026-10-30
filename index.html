@@ -60,6 +60,22 @@
   window.BusAppearance={themes:themes.map(([id,name])=>({id,name})),applyTheme};
 })();
 
+</script><script data-source="assets/release.js">
+(function(){
+  'use strict';
+  const allowed=['1.0','1.1'];
+  const requested=new URLSearchParams(location.search).get('version');
+  let saved=null;
+  try{saved=localStorage.getItem('pb-web-version');}catch{}
+  const current=allowed.includes(requested)?requested:allowed.includes(saved)?saved:'1.1';
+  document.documentElement.dataset.release=current;
+  window.BusRelease={current,switchTo(version){
+    if(!allowed.includes(version))return;
+    try{localStorage.setItem('pb-web-version',version);}catch{}
+    const url=new URL(location.href);url.searchParams.set('version',version);location.assign(url.href);
+  }};
+})();
+
 </script>
   <style data-source="assets/fonts.css">
 /* Google Fonts Latin subsets. SIL Open Font License files are in fonts/. */
@@ -735,6 +751,91 @@ dialog.is-closing::backdrop{animation:bus-backdrop-exit var(--motion-dialog-clos
   .forecast-nav button,.mobile-weather-widget{transition:none}
 }
 
+</style><style data-source="assets/search.css">
+/* Address search extends the existing stop picker without changing its layout. */
+.search-hint{margin:8px 2px 0;font:12px/1.5 var(--font-reading);letter-spacing:0;color:var(--muted)}
+.search-suggestions .address-search-action{min-height:58px;margin-top:6px;padding:12px 8px;border-top:1px solid var(--border-soft);border-radius:0;white-space:normal}
+.address-search-action strong{font-size:13px;overflow-wrap:anywhere;color:var(--fg)}
+.address-search-action small{font-size:11px;line-height:1.5;color:var(--muted)}
+.address-search-action>.ui-icon{float:left;width:18px;height:18px;margin:2px 8px 0 0;color:var(--fg)}
+
+.address-results{display:grid;gap:6px;max-height:min(280px,34dvh);margin-top:12px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.address-choice{display:flex;align-items:flex-start;gap:10px;width:100%;min-height:64px;padding:12px 10px;border:1px solid var(--border);border-radius:2px;background:var(--panel);text-align:left;color:var(--fg)}
+.address-choice>.ui-icon{width:18px;height:18px;margin-top:2px;align-self:flex-start;color:var(--muted)}
+.address-choice>div{min-width:0;flex:1}
+.address-choice strong{display:block;font:500 13px/1.5 var(--font-reading);letter-spacing:0;overflow-wrap:anywhere;color:var(--fg)}
+.address-choice small{display:block;margin-top:4px;font:12px/1.5 var(--font-reading);letter-spacing:0;color:var(--muted);overflow-wrap:anywhere}
+.address-choice:hover,.address-choice.is-active{border-color:var(--accent-line);background:var(--accent-tint)}
+.address-choice:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
+
+.search-status{margin-top:12px;padding:14px 12px;border:1px solid var(--border-soft);border-radius:2px;background:var(--panel);color:var(--muted)}
+.search-status p{margin:0;font:13px/1.6 var(--font-reading);letter-spacing:0;color:var(--muted)}
+.search-status strong{font-weight:500;color:var(--fg)}
+.search-status button{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;margin-top:8px;padding:7px 10px;border:1px solid var(--border);border-radius:2px;background:transparent;font:500 12px/1.5 var(--font-reading);letter-spacing:0;color:var(--fg)}
+.search-status button:hover{border-color:var(--accent-line);background:var(--hover)}
+.search-status[data-state=loading]{border-color:var(--border);color:var(--fg)}
+
+.nearby-summary{margin-top:12px;padding:12px;border:1px solid var(--border);border-radius:2px;background:var(--bg);color:var(--fg)}
+#nearbySummary{flex:none;margin:0 18px 14px}
+#resultList .address-results{max-height:none;overflow:visible}
+.nearby-summary p{margin:5px 0 0;font:12px/1.55 var(--font-reading);letter-spacing:0;color:var(--muted)}
+.nearby-summary>.micro{margin:0 0 5px;font:500 10px/1.5 var(--font-numbers);letter-spacing:.06em;color:var(--muted)}
+.nearby-summary>strong{display:block;font:500 14px/1.5 var(--font-reading);letter-spacing:0;color:var(--fg);overflow-wrap:anywhere}
+.clear-nearby{display:inline-flex;align-items:center;gap:7px;min-height:36px;margin-top:5px;padding:4px 0;border:0;background:transparent;font:500 12px/1.5 var(--font-reading);letter-spacing:0;color:var(--fg);text-decoration:underline;text-decoration-color:var(--border);text-underline-offset:3px}
+.clear-nearby:hover{text-decoration-color:currentColor}
+
+.nearby-stop.stop-result{align-items:flex-start;padding-top:16px;padding-bottom:17px}
+.nearby-stop>.ui-icon{width:18px;height:18px;margin-top:2px;align-self:flex-start}
+.nearby-stop>.stop-result-chevron,.nearby-stop>span:last-child{align-self:center}
+.nearby-stop .nearby-distance{display:block;margin-top:4px;font:12px/1.5 var(--font-numbers);letter-spacing:0;color:var(--muted)}
+.nearby-direction-chips{display:grid;gap:5px;margin-top:9px}
+.nearby-direction{display:flex;align-items:flex-start;gap:6px;min-width:0}
+.nearby-direction>small{display:block;flex:none;min-width:35px;margin:0;font:500 10px/1.8 var(--font-numbers);letter-spacing:.025em;color:var(--muted)}
+.nearby-direction .bus-chips{min-width:0;flex:1;margin-top:0;gap:3px}
+.nearby-direction .bus-chips span{font-size:10px;line-height:1.45;padding:1px 4px;color:var(--fg)}
+.nearby-direction .nearby-no-service{font:11px/1.6 var(--font-reading);color:var(--muted)}
+.nearby-empty{padding:20px 12px;font:13px/1.65 var(--font-reading);letter-spacing:0;color:var(--muted)}
+.nearby-empty strong{display:block;margin-bottom:5px;font-weight:500;color:var(--fg)}
+
+.nearby-context{margin:0 0 16px;padding:0 0 14px;border-bottom:1px solid var(--border-soft);color:var(--fg)}
+.nearby-context strong{font:500 14px/1.5 var(--font-reading);letter-spacing:0;overflow-wrap:anywhere;color:var(--fg)}
+.nearby-context p{margin:5px 0 0;font:13px/1.6 var(--font-reading);letter-spacing:0;color:var(--muted)}
+.nearby-context .micro{font-size:10px}
+.geocoder-credit{margin:9px 2px 0;font:11px/1.6 var(--font-reading);letter-spacing:0;color:var(--muted)}
+#geocoderCredit{flex:none;margin:8px 20px 10px}
+.geocoder-credit a{color:var(--muted);text-decoration:underline;text-decoration-color:var(--border);text-underline-offset:3px}
+.geocoder-credit a:hover{color:var(--fg);text-decoration-color:currentColor}
+
+/* The requested release switch stays separate from the journey controls. */
+.planner-bottom .release-button{justify-content:space-between;gap:8px;min-height:38px;margin-top:8px;padding:10px 0 3px;border-top:1px solid var(--border-soft);font:11px/1.5 var(--font-reading);letter-spacing:0;text-transform:none;color:var(--muted)}
+.planner-bottom .release-button:hover{color:var(--fg)}
+.release-options{display:grid;gap:10px}
+.release-choice{display:block;width:100%;min-height:76px;padding:16px;border:1px solid var(--border);border-radius:2px;background:var(--panel);text-align:left;color:var(--fg)}
+.release-choice strong{display:block;font-family:var(--font-heading);font-size:17px;font-weight:600;font-stretch:110%;line-height:1.3;letter-spacing:-.02em;color:var(--fg)}
+.release-choice small{display:block;margin-top:6px;font:13px/1.6 var(--font-reading);letter-spacing:0;color:var(--muted)}
+.release-choice[aria-pressed=true]{border-color:var(--accent-line);background:var(--accent-tint)}
+.release-choice:hover{border-color:var(--accent-line)}
+.release-choice:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
+.address-choice,.release-choice,.clear-nearby,.search-status button{transition:background-color 220ms var(--motion-ease),border-color 220ms var(--motion-ease),color 180ms ease}
+@media(max-width:760px){
+ .address-choice{min-height:72px;padding:13px 12px}
+ .address-choice strong,.nearby-stop.stop-result strong{font-size:14px}
+ .address-choice small{font-size:12px}
+ .search-suggestions .address-search-action{min-height:64px;padding-top:13px;padding-bottom:13px}
+ .address-search-action strong{font-size:14px}
+ .address-search-action small{font-size:12px}
+ .nearby-summary{padding:13px 12px}
+ .clear-nearby,.search-status button{min-height:44px}
+ .nearby-stop.stop-result{padding-top:17px;padding-bottom:18px}
+ .geocoder-credit{font-size:12px}
+ .planner-bottom .release-button{min-height:44px}
+ .release-choice{min-height:84px}
+}
+@media(prefers-reduced-motion:reduce){
+ .address-choice,.release-choice,.clear-nearby,.search-status button{transition:none}
+}
+
 </style>
   
 </head>
@@ -747,7 +848,8 @@ dialog.is-closing::backdrop{animation:bus-backdrop-exit var(--motion-dialog-clos
       <div class="planner-controls"><div class="direction-switch" aria-label="Sentido del viaje"><button data-direction="out" class="is-active" aria-pressed="true">Ida <span>Narón</span></button><button data-direction="back" aria-pressed="false">Vuelta <span>A Coruña</span></button></div><label class="field-label" for="shiftSelect">Tu horario de trabajo</label><div class="select-wrap"><select id="shiftSelect"><option value="early">08:30 — 17:45</option><option value="middle">09:00 — 18:15</option><option value="late">09:30 — 18:45</option></select><svg class="ui-icon shift-chevron" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><path d="m6 9 6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="shiftDays" hidden aria-hidden="true">L–V</span></div>
         <div class="search-wrap"><label class="search-box"><svg class="ui-icon search-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><circle cx="10.5" cy="10.5" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="m15.5 15.5 4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg><input type="search" id="searchInput" placeholder="Buscar una parada" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="searchSuggestions" aria-label="Buscar por nombre de parada"><button id="clearSearch" hidden aria-label="Limpiar búsqueda"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button></label><div id="searchSuggestions" class="search-suggestions" role="listbox" aria-label="Sugerencias de búsqueda" hidden></div></div>
       </div>
-      <div class="list-heading"><span id="listTitle">BUSES DISPONIBLES</span><span id="resultCount" hidden aria-hidden="true">5</span></div><div id="resultList" class="result-list" aria-live="polite"></div><div class="planner-bottom"><button id="openAllStops">Ver todas las paradas <svg class="ui-icon all-stops-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><path d="M4 12h16m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
+      <div id="nearbySummary" class="nearby-summary" hidden></div>
+      <div class="list-heading"><span id="listTitle">BUSES DISPONIBLES</span><span id="resultCount" hidden aria-hidden="true">5</span></div><div id="resultList" class="result-list" aria-live="polite"></div><div id="geocoderCredit" class="geocoder-credit" hidden></div><div class="planner-bottom"><button id="openAllStops">Ver todas las paradas <svg class="ui-icon all-stops-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><path d="M4 12h16m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button><button id="releaseButton" class="release-button" aria-haspopup="dialog" aria-controls="appDialog">Versión 1.1 · Cambiar</button></div>
     </aside>
     <section class="workbench" aria-label="Bus y paradas">
       <header class="detail-header"><button id="mobileBack" class="icon-button mobile-back" aria-label="Volver a los buses"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div class="route-badge" id="routeBadge">01</div><div class="detail-heading"><div class="micro" id="journeyDirection">Ida · A Coruña → Narón</div><h2 id="routeTitle">Bus 1</h2><p id="routeSubtitle">L–V · Turno 08:30–17:45</p></div><button id="weatherButton" class="weather-widget" aria-label="Tiempo actual de A Coruña"><span id="weatherIcon" aria-hidden="true">☁</span><span><strong id="weatherTemp">A Coruña</strong><small id="weatherCondition">Consultando el tiempo…</small><span id="weatherAlert" class="weather-alert-badge" hidden></span></span></button></header>
@@ -1647,7 +1749,38 @@ window.BUS_DATA = {
   function scheduleText(data,shift,direction,route){return [`Bus ${route.id} · Pull&Bear`,`${shift.days} · Turno ${shift.start}–${shift.end}`,direction==='out'?'IDA · A Coruña → Sede Pull&Bear':'VUELTA · Sede Pull&Bear → A Coruña','',...route.stops.map(s=>`${s.time}  ${s.label}`),'','Mapa de paradas: https://www.google.com/maps/d/viewer?mid='+data.mapId].join('\n');}
   function distanceMeters(a,b){const rad=n=>n*Math.PI/180,dLat=rad(b[0]-a[0]),dLon=rad(b[1]-a[1]);const h=Math.sin(dLat/2)**2+Math.cos(rad(a[0]))*Math.cos(rad(b[0]))*Math.sin(dLon/2)**2;return 6371000*2*Math.atan2(Math.sqrt(h),Math.sqrt(1-h));}
   function nearestStops(data,lat,lon,limit=3){return Object.values(data.stops).filter(stop=>services(data,stop.id).length).map(stop=>{const points=Object.entries(stop.points).map(([direction,point])=>({direction,point,distance:distanceMeters([lat,lon],point)})).sort((a,b)=>a.distance-b.distance);return {stop,...points[0]};}).filter(item=>Number.isFinite(item.distance)).sort((a,b)=>a.distance-b.distance).slice(0,limit);}
-  return {normalize,minutes,duration,key,matches,allRoutes,services,stopMatches,routeMatches,matchingStop,scheduleText,distanceMeters,nearestStops};
+  function nearbyStops(data,origin,{limit=5,maxDistanceMeters=Infinity}={}){
+    const validPoint=point=>Array.isArray(point)&&point.length>=2&&typeof point[0]==='number'&&typeof point[1]==='number'&&Number.isFinite(point[0])&&Number.isFinite(point[1])&&Math.abs(point[0])<=90&&Math.abs(point[1])<=180;
+    const from=[origin?.lat,origin?.lon];
+    if(!validPoint(from)||!data?.stops||!Array.isArray(data.shifts)||!data.routes)return [];
+    const count=limit===Infinity?Infinity:Number.isFinite(limit)?Math.max(0,Math.floor(limit)):5;
+    const radius=maxDistanceMeters===Infinity?Infinity:Number.isFinite(maxDistanceMeters)?maxDistanceMeters:-1;
+    if(!count||radius<0)return [];
+    const candidates=new Map();
+    Object.values(data.stops).forEach(stop=>{
+      if(!stop?.id)return;
+      const servedDirections=new Set(services(data,stop.id).map(service=>service.direction));
+      const directionDistances={},points={};
+      ['out','back'].forEach(direction=>{
+        const point=stop.points?.[direction];
+        if(!servedDirections.has(direction)||!validPoint(point))return;
+        // Clamp rounding at antipodes while retaining the existing distance API.
+        const rad=n=>n*Math.PI/180,dLat=rad(point[0]-from[0]),dLon=rad(point[1]-from[1]);
+        const h=Math.min(1,Math.max(0,Math.sin(dLat/2)**2+Math.cos(rad(from[0]))*Math.cos(rad(point[0]))*Math.sin(dLon/2)**2));
+        const distance=6371000*2*Math.atan2(Math.sqrt(h),Math.sqrt(1-h));
+        if(!Number.isFinite(distance))return;
+        directionDistances[direction]=distance;points[direction]=[point[0],point[1]];
+      });
+      const nearestDirection=Object.keys(directionDistances).sort((a,b)=>directionDistances[a]-directionDistances[b])[0];
+      if(!nearestDirection)return;
+      const distance=directionDistances[nearestDirection];
+      if(distance>radius)return;
+      const previous=candidates.get(stop.id);
+      if(!previous||distance<previous.distanceMeters)candidates.set(stop.id,{stop,distanceMeters:distance,point:points[nearestDirection],nearestDirection,directionDistances,points});
+    });
+    return [...candidates.values()].sort((a,b)=>a.distanceMeters-b.distanceMeters||String(a.stop.name||a.stop.id).localeCompare(String(b.stop.name||b.stop.id),'es')).slice(0,count);
+  }
+  return {normalize,minutes,duration,key,matches,allRoutes,services,stopMatches,routeMatches,matchingStop,scheduleText,distanceMeters,nearestStops,nearbyStops};
 });
 
 </script>
@@ -1965,6 +2098,318 @@ window.BUS_NOTICES=[];
 })();
 
 </script>
+<script data-source="assets/geocoder.js">
+(function(root){
+  'use strict';
+  // External requests happen only when search() or resolve() is explicitly called.
+  // CartoCiudad documentation: https://github.com/IDEESpain/Cartociudad
+  const CARTO_BASE='https://www.cartociudad.es/geocoder/api/geocoder/';
+  const CITY_CODE='15030',CITY_NAME='A Coruña',ALLOWED_TYPES=new Set(['callejero','portal']);
+  // municipio_filter uses the official municipality name, not the province or INE code.
+  // The returned municipality code is independently checked before exposing any result.
+  const EXCLUDED_TYPES='municipio,provincia,comunidad autonoma,poblacion,toponimo,expendeduria,punto_recarga_electrica,ngbe,carretera';
+  const TTL=10*60*1000,MAX_CACHE=40,REQUEST_GAP=1100,TIMEOUT=12000;
+  const providers={
+    cartociudad:{name:'CartoCiudad · IGN/CNIG',url:'https://www.cartociudad.es/web/portal/',credits:[{label:'CC BY 4.0 · SCNE',url:'https://www.scne.es/productos.html#CartoCiudad'}]}
+  };
+  const cache=new Map(),pending=new Map();
+  let queue=Promise.resolve(),lastStarted=0;
+  class GeocoderError extends Error{constructor(message,code){super(message);this.name='GeocoderError';this.code=code;}}
+  function cancelled(){return new DOMException('Búsqueda cancelada','AbortError');}
+  function checkAbort(signal){if(signal?.aborted)throw cancelled();}
+  function clone(value){return JSON.parse(JSON.stringify(value));}
+  function normalizeText(value){return String(value??'').trim().replace(/\s+/g,' ');}
+  function keyText(value){return normalizeText(value).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();}
+  function cleanQuery(value){
+    if(typeof value!=='string')throw new GeocoderError('Escribe una dirección para buscar.','invalid-query');
+    const query=normalizeText(value);
+    if(query.length<3)throw new GeocoderError('Escribe al menos 3 caracteres de la dirección.','short-query');
+    if(query.length>200)throw new GeocoderError('La dirección es demasiado larga. Acórtala y vuelve a buscar.','long-query');
+    return query;
+  }
+  function requestedNumber(query){const match=query.split(',')[0].match(/\b(\d{1,4}[a-zA-Z]?)\b/);return match?match[1]:null;}
+  function inCity(code,name){const municipalityCode=normalizeText(code);return municipalityCode?municipalityCode===CITY_CODE:['a coruna','coruna, a'].includes(keyText(name));}
+  function validPoint(lat,lon){return typeof lat==='number'&&Number.isFinite(lat)&&lat>=-90&&lat<=90&&typeof lon==='number'&&Number.isFinite(lon)&&lon>=-180&&lon<=180&&(lat!==0||lon!==0);}
+  function pointOf(value){const lat=value?.lat,lon=value?.lng??value?.lon;return validPoint(lat,lon)?{lat,lon}:{lat:null,lon:null};}
+  function houseNumber(value){
+    const number=value?.portalNumber;
+    if(number===null||number===undefined||number==='')return null;
+    const base=normalizeText(number),extension=normalizeText(value.extension);
+    return base+(extension?' '+extension:'');
+  }
+  function joinUnique(values){const seen=new Set();return values.map(normalizeText).filter(value=>{const key=keyText(value);if(!value||seen.has(key))return false;seen.add(key);return true;}).join(' · ');}
+  function accuracyFor(type){if(type==='portal')return 'address';if(type==='callejero'||type==='carretera')return 'street';if(['municipio','poblacion','provincia','comunidad autonoma','comunidad_autonoma','cod_postal'].includes(type))return 'area';return 'place';}
+  function isApproximate(accuracy,requested,actual){return accuracy==='street'||accuracy==='area'||!!(requested&&keyText(requested)!==keyText(actual));}
+  function normalizeCarto(raw,requested){
+    if(!raw||typeof raw!=='object'||typeof raw.id!=='string'&&typeof raw.id!=='number')return null;
+    const providerId=normalizeText(raw.id),type=normalizeText(raw.type),label=normalizeText(raw.address);
+    if(!providerId||providerId.length>160||!ALLOWED_TYPES.has(type)||!label||!inCity(raw.muniCode,raw.muni))return null;
+    const point=pointOf(raw),accuracy=accuracyFor(type),actual=houseNumber(raw);
+    return {id:'cartociudad:'+type+':'+providerId,provider:'cartociudad',providerId,type,label,address:joinUnique([raw.poblacion,raw.muni,raw.province,raw.postalCode]),...point,municipality:CITY_NAME,municipalityCode:CITY_CODE,source:providers.cartociudad.name,sourceUrl:providers.cartociudad.url,accuracy,approximate:isApproximate(accuracy,requested,actual),requestedHouseNumber:requested,houseNumber:actual};
+  }
+  function dedupe(list){const ids=new Set(),places=new Set();return list.filter(item=>{if(!item||ids.has(item.id))return false;ids.add(item.id);const place=keyText(item.label+' '+item.address)+':'+(item.lat===null?'':item.lat.toFixed(4))+':'+(item.lon===null?'':item.lon.toFixed(4));if(places.has(place))return false;places.add(place);return true;});}
+  function remember(key,value){cache.delete(key);cache.set(key,{until:Date.now()+TTL,value:clone(value)});while(cache.size>MAX_CACHE)cache.delete(cache.keys().next().value);}
+  function pause(milliseconds,signal){
+    checkAbort(signal);if(milliseconds<=0)return Promise.resolve();
+    return new Promise((resolve,reject)=>{const timer=setTimeout(()=>{signal.removeEventListener('abort',abort);resolve();},milliseconds);const abort=()=>{clearTimeout(timer);signal.removeEventListener('abort',abort);reject(cancelled());};signal.addEventListener('abort',abort,{once:true});});
+  }
+  function fetchJSON(url,signal){
+    const task=queue.catch(()=>null).then(async()=>{
+      checkAbort(signal);await pause(Math.max(0,REQUEST_GAP-(Date.now()-lastStarted)),signal);checkAbort(signal);
+      if(root.navigator?.onLine===false)throw new GeocoderError('Necesitas conexión para buscar una dirección. Las paradas siguen disponibles.','offline');
+      lastStarted=Date.now();
+      const controller=new AbortController(),abort=()=>controller.abort();signal.addEventListener('abort',abort,{once:true});
+      let timedOut=false;const timer=setTimeout(()=>{timedOut=true;controller.abort();},TIMEOUT);
+      try{
+        const response=await fetch(url,{signal:controller.signal,mode:'cors',credentials:'omit',cache:'no-store',referrerPolicy:'strict-origin-when-cross-origin',headers:{Accept:'application/json'}});
+        if(response.status===429)throw new GeocoderError('El buscador de direcciones está ocupado. Espera unos segundos y vuelve a intentarlo.','rate-limit');
+        if(!response.ok)throw new GeocoderError('No se ha podido consultar el callejero. Vuelve a intentarlo.','service');
+        return await response.json();
+      }catch(error){
+        checkAbort(signal);
+        if(timedOut)throw new GeocoderError('La búsqueda está tardando demasiado. Vuelve a intentarlo.','timeout');
+        if(error instanceof GeocoderError)throw error;
+        throw new GeocoderError('No se ha podido conectar con el callejero. Comprueba la conexión y vuelve a intentarlo.','network');
+      }finally{clearTimeout(timer);signal.removeEventListener('abort',abort);}
+    });
+    queue=task.then(()=>null,()=>null);return task;
+  }
+  function shared(key,producer,signal){
+    checkAbort(signal);const stored=cache.get(key);
+    if(stored&&stored.until>Date.now())return Promise.resolve(clone(stored.value));
+    if(stored)cache.delete(key);
+    let entry=pending.get(key);
+    if(entry?.controller.signal.aborted){pending.delete(key);entry=null;}
+    if(!entry){
+      entry={controller:new AbortController(),users:0,settled:false,promise:null};pending.set(key,entry);
+      entry.promise=Promise.resolve().then(()=>producer(entry.controller.signal)).then(value=>{checkAbort(entry.controller.signal);remember(key,value);return value;}).finally(()=>{entry.settled=true;if(pending.get(key)===entry)pending.delete(key);});
+    }
+    entry.users++;
+    return new Promise((resolve,reject)=>{
+      let done=false;
+      const clean=()=>{if(done)return false;done=true;entry.users--;signal?.removeEventListener('abort',abort);return true;};
+      const abort=()=>{if(!clean())return;if(entry.users===0&&!entry.settled)entry.controller.abort();reject(cancelled());};
+      signal?.addEventListener('abort',abort,{once:true});
+      entry.promise.then(value=>{if(clean())resolve(clone(value));},error=>{if(clean())reject(error);});
+      if(signal?.aborted)abort();
+    });
+  }
+  async function search(value,{signal}={}){
+    const query=cleanQuery(value),requested=requestedNumber(query);
+    return shared('search:'+keyText(query),async requestSignal=>{
+      const localQuery=/(?:^|[ ,])(?:a )?coruna(?:$|[ ,])/.test(keyText(query))?query:query+', '+CITY_NAME;
+      const params=new URLSearchParams({q:localQuery,limit:'12',municipio_filter:CITY_NAME,no_process:EXCLUDED_TYPES});
+      const data=await fetchJSON(CARTO_BASE+'candidates?'+params,requestSignal);
+      if(!Array.isArray(data))throw new GeocoderError('El callejero ha devuelto una respuesta no válida. Vuelve a intentarlo.','invalid-response');
+      return dedupe(data.map(item=>normalizeCarto(item,requested))).slice(0,6);
+    },signal);
+  }
+  async function resolve(candidate,{signal}={}){
+    checkAbort(signal);
+    if(!candidate||typeof candidate!=='object')throw new GeocoderError('Selecciona una dirección del listado.','invalid-candidate');
+    if(candidate.provider!=='cartociudad'||!candidate.providerId||!ALLOWED_TYPES.has(candidate.type)||!inCity(candidate.municipalityCode,candidate.municipality))throw new GeocoderError('Selecciona una calle o un portal de A Coruña ciudad.','outside-area');
+    if(validPoint(candidate.lat,candidate.lon))return clone(candidate);
+    const result=await shared('resolve:'+candidate.type+':'+candidate.providerId,async requestSignal=>{
+      const params=new URLSearchParams({id:String(candidate.providerId),type:String(candidate.type)});
+      const raw=await fetchJSON(CARTO_BASE+'find?'+params,requestSignal),point=pointOf(raw);
+      if(!raw||Array.isArray(raw)||String(raw.id)!==String(candidate.providerId)||raw.type!==candidate.type||!inCity(raw.muniCode,raw.muni)||!validPoint(point.lat,point.lon))throw new GeocoderError('El callejero no tiene coordenadas verificadas de A Coruña para esa dirección. Prueba otra coincidencia.','no-coordinates');
+      return {...point,houseNumber:houseNumber(raw)};
+    },signal);
+    const actual=result.houseNumber||candidate.houseNumber||null;
+    return {...clone(candidate),lat:result.lat,lon:result.lon,houseNumber:actual,approximate:isApproximate(candidate.accuracy,candidate.requestedHouseNumber,actual)};
+  }
+  function getAttribution(value){const provider=typeof value==='string'?value:value?.provider;return clone(providers[provider]||providers.cartociudad);}
+  root.BusGeocoder={search,resolve,getAttribution,attribution:getAttribution('cartociudad'),providers:clone(providers)};
+})(typeof window!=='undefined'?window:globalThis);
+
+</script>
+<script data-source="assets/address-search.js">
+(function(root){
+  'use strict';
+  const esc=value=>String(value??'').replace(/[&<>"']/g,char=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+  const locationIcon='<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>';
+  const rightIcon='<svg class="ui-icon stop-result-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 6 6 6-6 6"/></svg>';
+  const defaultAttribution={name:'CartoCiudad · IGN/CNIG',url:'https://www.cartociudad.es/web/portal/',credits:[{label:'CC BY 4.0 · SCNE',url:'https://www.scne.es/productos.html#CartoCiudad'}]};
+
+  function create(config){
+    const {data,core,geocoder,getQuery,setQuery,getSelectedStop,onQueryChange,onSearchStart,onSearchUpdate,onChooseStop}=config;
+    const $=selector=>document.querySelector(selector);
+    const idle=()=>({phase:'idle',origin:null,nearby:[],places:[],error:''});
+    let view=idle(),requestVersion=0,controller=null,suggestionOptions=[],active=-1;
+    let loadingMessage='',retryAction=null,lastPlaces=[];
+    const query=()=>String(getQuery()||'').trim();
+    const notify=callback=>{if(typeof callback==='function')callback();};
+    const validPoint=place=>place&&typeof place.lat==='number'&&typeof place.lon==='number'&&Number.isFinite(place.lat)&&Number.isFinite(place.lon)&&Math.abs(place.lat)<=90&&Math.abs(place.lon)<=180;
+    const safeURL=value=>typeof value==='string'&&/^https:\/\//.test(value)?value:null;
+    function writeQuery(value){setQuery(value);const input=$('#searchInput');if(input)input.value=value;}
+    function closeSuggestions(){
+      suggestionOptions=[];active=-1;
+      const popup=$('#searchSuggestions'),input=$('#searchInput');
+      if(popup)popup.hidden=true;
+      if(input){input.setAttribute('aria-expanded','false');input.removeAttribute('aria-activedescendant');}
+    }
+    function abortRequest(){requestVersion++;if(controller)controller.abort();controller=null;}
+    function reset(){
+      abortRequest();view=idle();loadingMessage='';retryAction=null;lastPlaces=[];closeSuggestions();renderContext();
+    }
+    function getView(){return {...view,nearby:view.nearby.slice(),places:view.places.slice()};}
+    function stopNames(stop){return [stop.name,...(stop.aliases||[])].map(core.normalize);}
+    function localStops(text){
+      const normalized=core.normalize(text);
+      const rank=stop=>{const names=stopNames(stop);return names.includes(normalized)?0:names.some(name=>name.startsWith(normalized))?1:2;};
+      return Object.values(data.stops).filter(stop=>core.services(data,stop.id).length&&core.stopMatches(data,stop.id,text)).sort((a,b)=>rank(a)-rank(b)||a.name.localeCompare(b.name,'es')).slice(0,6);
+    }
+    function chooseLocal(stop){
+      reset();writeQuery('');onChooseStop(stop.id,{fromNearby:false});
+    }
+    function syncActive(){
+      const input=$('#searchInput'),popup=$('#searchSuggestions');
+      suggestionOptions.forEach((option,index)=>{const button=popup?.querySelector('#address-suggestion-'+index);if(button){button.classList.toggle('is-active',index===active);button.setAttribute('aria-selected',String(index===active));}});
+      const button=active>=0?popup?.querySelector('#address-suggestion-'+active):null;
+      if(button){
+        input.setAttribute('aria-activedescendant',button.id);
+        const top=button.offsetTop,bottom=top+button.offsetHeight;
+        if(top<popup.scrollTop)popup.scrollTop=top;else if(bottom>popup.scrollTop+popup.clientHeight)popup.scrollTop=bottom-popup.clientHeight;
+      }else input?.removeAttribute('aria-activedescendant');
+    }
+    function showSuggestions(){
+      const text=query(),popup=$('#searchSuggestions'),input=$('#searchInput');
+      if(!text||!popup||!input){closeSuggestions();return;}
+      const stops=localStops(text);
+      suggestionOptions=stops.map(stop=>({kind:'stop',stop,choose:()=>chooseLocal(stop)}));
+      if(text.length>=3)suggestionOptions.push({kind:'address',choose:()=>searchAddress(text)});
+      active=-1;
+      popup.innerHTML=(stops.length?'<div class="suggestion-group">PARADAS DEL SERVICIO</div>':'')+suggestionOptions.map((option,index)=>{
+        if(option.kind==='address')return `<button type="button" id="address-suggestion-${index}" class="suggestion address-search-action" role="option" aria-selected="false" tabindex="-1">${locationIcon}<strong>Buscar “${esc(text)}” en A Coruña</strong><small>Encuentra las paradas más cercanas.</small></button>`;
+        const buses=[...new Set(core.services(data,option.stop.id).map(service=>service.route.id))].sort((a,b)=>a-b);
+        return `<button type="button" id="address-suggestion-${index}" class="suggestion" role="option" aria-selected="false" tabindex="-1"><strong>${esc(option.stop.name)}</strong><small>${buses.map(id=>'Bus '+id).join(' · ')}</small></button>`;
+      }).join('')+(!suggestionOptions.length?'<div class="suggestion-status" role="status">Sigue escribiendo para buscar una parada o dirección.</div>':'');
+      popup.hidden=false;popup.scrollTop=0;input.setAttribute('aria-expanded','true');input.removeAttribute('aria-activedescendant');
+      suggestionOptions.forEach((option,index)=>{const button=popup.querySelector('#address-suggestion-'+index);button.onmousedown=event=>event.preventDefault();button.onclick=option.choose;});
+    }
+    function currentRequest(version,text,signal){return version===requestVersion&&!signal.aborted&&query()===text;}
+    function startRequest(message){
+      abortRequest();controller=new AbortController();loadingMessage=message;closeSuggestions();
+      view={phase:'loading',origin:null,nearby:[],places:lastPlaces.slice(),error:''};
+      return {version:requestVersion,signal:controller.signal,text:query()};
+    }
+    function displayError(error,action){
+      const message=typeof error?.message==='string'?error.message:'Comprueba la conexión y vuelve a intentarlo.';
+      view={phase:'error',origin:null,nearby:[],places:lastPlaces.slice(),error:message};retryAction=action;notify(onSearchUpdate);
+    }
+    async function searchAddress(text=query()){
+      text=String(text).trim();if(text.length<3){showSuggestions();return;}
+      if(query()!==text)writeQuery(text);
+      lastPlaces=[];const pending=startRequest('Buscando la dirección en A Coruña…');
+      retryAction=()=>searchAddress(text);notify(onSearchStart);
+      try{
+        const result=await geocoder.search(text,{signal:pending.signal});
+        if(!currentRequest(pending.version,pending.text,pending.signal))return;
+        controller=null;
+        lastPlaces=Array.isArray(result)?result.filter(place=>place&&typeof place.label==='string'&&place.label.trim()):[];
+        if(!lastPlaces.length){displayError(new Error('No encontramos esa dirección en A Coruña. Prueba con el nombre de la calle y, si lo sabes, el número.'),()=>searchAddress(text));return;}
+        // A matching street can still contain many portals: let the person confirm it.
+        view={phase:'choices',origin:null,nearby:[],places:lastPlaces.slice(),error:''};notify(onSearchUpdate);focusFirstResult();
+      }catch(error){if(currentRequest(pending.version,pending.text,pending.signal))displayError(error,()=>searchAddress(text));}
+    }
+    async function choosePlace(candidate){
+      const pending=startRequest('Localizando la dirección…');retryAction=()=>choosePlace(candidate);notify(onSearchUpdate);
+      try{
+        const resolved=typeof geocoder.resolve==='function'?await geocoder.resolve(candidate,{signal:pending.signal}):candidate;
+        if(!currentRequest(pending.version,pending.text,pending.signal))return;
+        controller=null;
+        if(!validPoint(resolved))throw new Error('No se ha podido localizar esta dirección. Prueba con otra coincidencia.');
+        const origin={...candidate,...resolved};
+        view={phase:'nearby',origin,nearby:core.nearbyStops(data,origin,{limit:5}),places:lastPlaces.slice(),error:''};notify(onSearchUpdate);focusFirstResult();
+      }catch(error){if(currentRequest(pending.version,pending.text,pending.signal))displayError(error,()=>choosePlace(candidate));}
+    }
+    function distanceLabel(meters){if(meters<10)return 'menos de 10 m';return meters<1000?new Intl.NumberFormat('es-ES',{maximumFractionDigits:0}).format(Math.round(meters/10)*10)+' m':new Intl.NumberFormat('es-ES',{maximumFractionDigits:meters<10000?1:0}).format(meters/1000)+' km';}
+    function attributionHTML(){
+      let attribution=geocoder.attribution||defaultAttribution;
+      if(typeof geocoder.getAttribution==='function')try{attribution=geocoder.getAttribution(view.origin||view.places[0])||attribution;}catch{}
+      const sources=Array.isArray(attribution)?attribution:[attribution];
+      return sources.map(source=>[{label:source?.name||'CartoCiudad · IGN/CNIG',url:source?.url},...(source?.credits||[])].map(credit=>{const url=safeURL(credit.url);return url?`<a href="${esc(url)}" target="_blank" rel="noopener">${esc(credit.label)}</a>`:esc(credit.label);}).join(' · ')).join(' · ');
+    }
+    function clearNearby(){reset();writeQuery('');notify(onQueryChange);notify(onSearchUpdate);$('#searchInput')?.focus({preventScroll:true});}
+    function renderContext(){
+      const summary=$('#nearbySummary'),credit=$('#geocoderCredit');
+      if(credit){credit.hidden=view.phase==='idle';credit.innerHTML=view.phase==='idle'?'':'Direcciones: '+attributionHTML();}
+      if(!summary)return;
+      summary.hidden=view.phase!=='nearby';
+      if(summary.hidden){summary.innerHTML='';return;}
+      const far=view.nearby[0]?.distanceMeters>=20000;
+      summary.innerHTML=`<div class="micro">PARADAS CERCA DE</div><strong>${esc(view.origin.label)}</strong>${view.origin.address&&view.origin.address!==view.origin.label?`<p>${esc(view.origin.address)}</p>`:''}<p>Distancias en línea recta.</p>${view.origin.approximate?'<p>Ubicación aproximada. La distancia puede variar.</p>':''}${far?'<p>Esta dirección está fuera del área habitual A Coruña–Narón. Se muestran las paradas más próximas de la red.</p>':''}<button type="button" class="clear-nearby">Cambiar búsqueda</button>`;
+      summary.querySelector('.clear-nearby').onclick=clearNearby;
+    }
+    function focusFirstResult(){
+      const button=$('#resultList')?.querySelector('.address-choice,.nearby-stop');button?.focus({preventScroll:true});
+    }
+    function renderDirectionBuses(stopId){
+      const services=core.services(data,stopId);
+      return `<div class="nearby-direction-chips">${['out','back'].map(direction=>{
+        const buses=[...new Set(services.filter(service=>service.direction===direction).map(service=>service.route.id))].sort((a,b)=>a-b);
+        return `<div class="nearby-direction"><small>${direction==='out'?'Ida':'Vuelta'}</small>${buses.length?`<div class="bus-chips">${buses.map(id=>`<span>BUS ${esc(id)}</span>`).join('')}</div>`:'<span class="nearby-no-service">Sin servicio</span>'}</div>`;
+      }).join('')}</div>`;
+    }
+    function renderResults(){
+      renderContext();if(view.phase==='idle')return false;
+      const list=$('#resultList'),count=$('#resultCount'),title=$('#listTitle');if(!list)return false;
+      if(view.phase==='loading'){
+        if(title)title.textContent='BUSCANDO EN A CORUÑA';if(count)count.textContent='';
+        list.innerHTML=`<div class="search-status" data-state="loading" role="status"><p>${esc(loadingMessage)}</p></div>`;
+      }else if(view.phase==='choices'){
+        if(title)title.textContent='ELIGE UNA DIRECCIÓN';if(count)count.textContent=view.places.length;
+        list.innerHTML='<div class="search-status"><p>Confirma la dirección en A Coruña para ver sus paradas cercanas.</p></div><div class="address-results" role="group" aria-label="Direcciones de A Coruña encontradas">'+view.places.map((place,index)=>`<button type="button" class="address-choice" data-address-choice="${index}">${locationIcon}<div><strong>${esc(place.label)}</strong>${place.address&&place.address!==place.label?`<small>${esc(place.address)}</small>`:''}${place.approximate?'<small>Ubicación aproximada</small>':''}</div></button>`).join('')+'</div>';
+        list.querySelectorAll('[data-address-choice]').forEach(button=>button.onclick=()=>choosePlace(view.places[Number(button.dataset.addressChoice)]));
+      }else if(view.phase==='nearby'){
+        if(title)title.textContent='PARADAS MÁS CERCANAS';if(count)count.textContent=view.nearby.length;
+        const selected=getSelectedStop();
+        list.innerHTML=view.nearby.length?view.nearby.map(item=>`<button type="button" class="stop-result nearby-stop ${selected===item.stop.id?'selected':''}" data-nearby-stop="${esc(item.stop.id)}" aria-pressed="${selected===item.stop.id}">${locationIcon}<div><strong>${esc(item.stop.name)}</strong><span class="nearby-distance">${distanceLabel(item.distanceMeters)} en línea recta</span>${renderDirectionBuses(item.stop.id)}</div>${rightIcon}</button>`).join(''):'<div class="nearby-empty"><strong>No hay paradas con ubicación disponible.</strong>Prueba otra dirección o busca una parada por su nombre.</div>';
+        list.querySelectorAll('[data-nearby-stop]').forEach(button=>button.onclick=()=>{closeSuggestions();onChooseStop(button.dataset.nearbyStop,{fromNearby:true});});
+      }else{
+        if(title)title.textContent='DIRECCIÓN EN A CORUÑA';if(count)count.textContent='';
+        list.innerHTML=`<div class="search-status" data-state="error" role="status"><p><strong>Revisa la búsqueda</strong></p><p>${esc(view.error)}</p><button type="button" data-address-retry>Volver a intentar</button></div>`;
+        list.querySelector('[data-address-retry]').onclick=()=>retryAction?.();
+      }
+      return true;
+    }
+    function renderNoLocalMatches(){
+      const list=$('#resultList'),text=query();if(!list)return false;
+      const matches=localStops(text);
+      if(matches.length){
+        list.innerHTML='<div class="search-status"><p><strong>No hay buses coincidentes en este turno y sentido.</strong></p><p>Elige una parada para ver todos sus buses.</p></div><div class="address-results">'+matches.slice(0,3).map((stop,index)=>`<button type="button" class="address-choice" data-local-match="${index}">${locationIcon}<div><strong>${esc(stop.name)}</strong><small>${[...new Set(core.services(data,stop.id).map(service=>service.route.id))].sort((a,b)=>a-b).map(id=>'Bus '+id).join(' · ')}</small></div></button>`).join('')+'</div>';
+        list.querySelectorAll('[data-local-match]').forEach(button=>button.onclick=()=>chooseLocal(matches[Number(button.dataset.localMatch)]));return true;
+      }
+      list.innerHTML=`<div class="search-status"><p><strong>No hay paradas con ese nombre.</strong></p>${text.length>=3?`<p>Puedes buscar una calle, plaza o avenida de A Coruña para ver las paradas cercanas.</p><button type="button" data-search-address>Buscar “${esc(text)}” en A Coruña</button>`:'<p>Escribe al menos tres caracteres para buscar una dirección en A Coruña.</p>'}</div>`;
+      const button=list.querySelector('[data-search-address]');if(button)button.onclick=()=>searchAddress(text);return true;
+    }
+    function bind(){
+      const input=$('#searchInput'),clear=$('#clearSearch');if(!input)return;
+      input.oninput=event=>{const value=event.target.value;reset();writeQuery(value);notify(onQueryChange);showSuggestions();};
+      input.onfocus=showSuggestions;
+      input.onkeydown=event=>{
+        if(event.isComposing)return;
+        if(event.key==='Escape'){closeSuggestions();return;}
+        if(event.key==='Tab'){closeSuggestions();return;}
+        if(event.key==='ArrowDown'||event.key==='ArrowUp'){
+          if($('#searchSuggestions').hidden)showSuggestions();if(!suggestionOptions.length)return;
+          event.preventDefault();active=active<0?(event.key==='ArrowDown'?0:suggestionOptions.length-1):(active+(event.key==='ArrowDown'?1:-1)+suggestionOptions.length)%suggestionOptions.length;syncActive();return;
+        }
+        if(event.key!=='Enter')return;
+        event.preventDefault();
+        if(!$('#searchSuggestions').hidden&&active>=0){suggestionOptions[active]?.choose();return;}
+        const text=query(),exact=localStops(text).find(stop=>stopNames(stop).includes(core.normalize(text)));
+        if(exact){chooseLocal(exact);return;}if(text.length>=3)searchAddress(text);else showSuggestions();
+      };
+      if(clear)clear.onclick=clearNearby;
+      renderContext();
+    }
+    return {bind,reset,closeSuggestions,renderResults,renderNoLocalMatches,getView};
+  }
+  root.BusAddressSearch={create};
+})(typeof window!=='undefined'?window:globalThis);
+
+</script>
 <script data-source="assets/app.js">
 (function(){
   'use strict';
@@ -1974,6 +2419,8 @@ window.BUS_NOTICES=[];
   const ICON_LOCATION='<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>',ICON_RIGHT='<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>',ICON_EXTERNAL='<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6m0-6L10 14M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>';
   const state={shift:'early',direction:'out',routeId:1,stopId:'pontevedra',query:'',mode:'routes',servicesOpen:false,weather:null,weatherAlerts:null,noticeIndex:0};
   const suggestions={open:false,local:[],active:-1};
+  const release=window.BusRelease?.current||'1.1';
+  let addressSearch=null;
   let mapTimer,lastMapKey='',lastDetailKey='',lastFocused=null;
   const detailMotion={epoch:0,phase:'idle',animations:[],gridWasInert:false,includeWeather:false};
   const detailMotionPreference=window.matchMedia('(prefers-reduced-motion:reduce)');
@@ -1985,17 +2432,22 @@ window.BUS_NOTICES=[];
   const routeOrigin=r=>D.stops[r.stops[0].id].name,destination=r=>D.stops[r.stops.at(-1).id].name;
   const formatTime=t=>new Intl.DateTimeFormat('es-ES',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Madrid'}).format(new Date(t));
   function mobileDetail(){if(window.matchMedia('(max-width:760px)').matches){const workspace=$('.workspace'),revealing=!workspace.classList.contains('mobile-detail');workspace.classList.add('mobile-detail');if(revealing)animateDetail();window.scrollTo({top:0,behavior:'instant'});$('#mobileBack').focus({preventScroll:true});}}
-  function closeSuggestions(){suggestions.open=false;suggestions.active=-1;$('#searchSuggestions').hidden=true;$('#searchInput').setAttribute('aria-expanded','false');$('#searchInput').removeAttribute('aria-activedescendant');}
-  function setMode(mode){closeSuggestions();state.mode=mode;state.query='';$('#searchInput').value='';state.servicesOpen=false;if(mode==='stops')state.stopId=null;if(mode==='routes'&&!currentRoute().stops.some(s=>s.id===state.stopId))state.stopId=currentRoute().stops[0].id;$('.workspace').classList.remove('mobile-detail');render(true);}
-  function setRoute(shift,direction,id,stopId){closeSuggestions();state.shift=shift;state.direction=direction;state.routeId=Number(id);state.mode='routes';state.servicesOpen=false;const route=currentRoute();if(state.query&&!C.routeMatches(D,route,state.query)){state.query='';$('#searchInput').value='';}state.stopId=stopId||route.stops[0].id;render(true);mobileDetail();}
+  function closeSuggestions(){if(addressSearch){addressSearch.closeSuggestions();return;}suggestions.open=false;suggestions.active=-1;$('#searchSuggestions').hidden=true;$('#searchInput').setAttribute('aria-expanded','false');$('#searchInput').removeAttribute('aria-activedescendant');}
+  function setMode(mode){closeSuggestions();addressSearch?.reset();state.mode=mode;state.query='';$('#searchInput').value='';state.servicesOpen=false;if(mode==='stops')state.stopId=null;if(mode==='routes'&&!currentRoute().stops.some(s=>s.id===state.stopId))state.stopId=currentRoute().stops[0].id;$('.workspace').classList.remove('mobile-detail');render(true);}
+  function setRoute(shift,direction,id,stopId){closeSuggestions();if(addressSearch?.getView().origin){state.query='';$('#searchInput').value='';}addressSearch?.reset();state.shift=shift;state.direction=direction;state.routeId=Number(id);state.mode='routes';state.servicesOpen=false;const route=currentRoute();if(state.query&&!C.routeMatches(D,route,state.query)){state.query='';$('#searchInput').value='';}state.stopId=stopId||route.stops[0].id;render(true);mobileDetail();}
   function chooseStop(id,fromPlanner=false){if(!D.stops[id])return;closeSuggestions();state.stopId=id;state.servicesOpen=true;if(state.mode==='routes')renderDetail();else transitionDetail();if(state.mode!=='routes')renderResults();renderMap();if(fromPlanner)mobileDetail();}
   function renderControls(){const nonRoutes=state.mode!=='routes';$('.planner').classList.toggle('is-stop-mode',nonRoutes);$('.planner-intro h1').textContent=nonRoutes?'Busca tu parada':'Elige tu bus';$('#navRoutes').classList.toggle('active',!nonRoutes);$('#navStops').classList.toggle('active',nonRoutes);$('#shiftSelect').value=state.shift;$('#shiftDays').textContent=currentShift().shortDays;$$('[data-direction]').forEach(b=>{const on=b.dataset.direction===state.direction;b.classList.toggle('is-active',on);b.setAttribute('aria-pressed',on);});$('#clearSearch').hidden=!state.query;$('#listTitle').textContent=nonRoutes?'PARADAS DEL SERVICIO':'BUSES DISPONIBLES';}
-  function renderResults(){if(state.mode!=='routes')return renderStopResults();const routes=D.routes[state.shift][state.direction].filter(r=>C.routeMatches(D,r,state.query));$('#resultCount').textContent=routes.length;
-    if(!routes.length){const others=C.allRoutes(D).filter(s=>s.direction===state.direction&&s.shift.id!==state.shift&&C.routeMatches(D,s.route,state.query));$('#resultList').innerHTML=`<div class="empty-state"><strong>No hay coincidencias en este turno.</strong>Busca por el nombre de una parada o selecciona otro horario.${others.map(s=>`<button class="other-route" data-other-shift="${s.shift.id}" data-other-bus="${s.route.id}">Bus ${s.route.id} · Turno ${s.shift.start}–${s.shift.end} →</button>`).join('')}</div>`;$$('[data-other-shift]').forEach(b=>b.onclick=()=>setRoute(b.dataset.otherShift,state.direction,b.dataset.otherBus));return;}
+  function renderResults(){if(addressSearch?.renderResults())return;if(state.mode!=='routes')return renderStopResults();const routes=D.routes[state.shift][state.direction].filter(r=>C.routeMatches(D,r,state.query));$('#resultCount').textContent=routes.length;
+    if(!routes.length){if(addressSearch){addressSearch.renderNoLocalMatches();return;}const others=C.allRoutes(D).filter(s=>s.direction===state.direction&&s.shift.id!==state.shift&&C.routeMatches(D,s.route,state.query));$('#resultList').innerHTML=`<div class="empty-state"><strong>No hay coincidencias en este turno.</strong>Busca por el nombre de una parada o selecciona otro horario.${others.map(s=>`<button class="other-route" data-other-shift="${s.shift.id}" data-other-bus="${s.route.id}">Bus ${s.route.id} · Turno ${s.shift.start}–${s.shift.end} →</button>`).join('')}</div>`;$$('[data-other-shift]').forEach(b=>b.onclick=()=>setRoute(b.dataset.otherShift,state.direction,b.dataset.otherBus));return;}
     $('#resultList').innerHTML=routes.map(r=>{const selected=r.id===state.routeId,match=state.query?C.matchingStop(D,r,state.query):-1;return `<article class="route-result ${selected?'selected':''}"><button class="route-pick" data-pick-route="${r.id}" aria-pressed="${selected}"><span class="route-pick-top"><span class="line-label">Bus ${r.id}</span><span class="route-minutes">${r.stops.length} paradas · ${C.duration(r)} min</span></span><strong>${esc(state.direction==='out'?routeOrigin(r):destination(r))}</strong><span class="route-times"><span>${r.stops[0].time}</span><span>→</span><span>${r.stops.at(-1).time}</span></span>${match>=0?`<span class="route-match">${r.stops[match].time} · ${esc(D.stops[r.stops[match].id].name)}</span>`:''}</button></article>`;}).join('');$$('[data-pick-route]').forEach(b=>b.onclick=()=>{const id=Number(b.dataset.pickRoute),r=D.routes[state.shift][state.direction].find(x=>x.id===id),match=state.query?C.matchingStop(D,r,state.query):-1;setRoute(state.shift,state.direction,id,match>=0?r.stops[match].id:undefined);});
   }
-  function renderStopResults(){const stops=Object.values(D.stops).filter(s=>C.services(D,s.id).length&&C.stopMatches(D,s.id,state.query)).sort((a,b)=>a.name.localeCompare(b.name,'es'));$('#resultCount').textContent=stops.length;$('#resultList').innerHTML=stops.length?stops.map(s=>{const services=C.services(D,s.id),buses=[...new Set(services.map(x=>x.route.id))].sort((a,b)=>a-b);return `<button class="stop-result ${state.stopId===s.id?'selected':''}" data-pick-stop="${s.id}" aria-pressed="${state.stopId===s.id}"><span aria-hidden="true">${ICON_LOCATION}</span><div><strong>${esc(s.name)}</strong><small>${services.length} horarios · Ida y vuelta</small><div class="bus-chips">${buses.map(b=>`<span>BUS ${b}</span>`).join('')}</div></div><span aria-hidden="true">${ICON_RIGHT}</span></button>`;}).join(''):'<div class="empty-state"><strong>No hay paradas con ese nombre.</strong></div>';$$('[data-pick-stop]').forEach(b=>b.onclick=()=>chooseStop(b.dataset.pickStop,true));}
-  function serviceMarkup(stopId){const services=C.services(D,stopId);return `<div class="service-groups">${['out','back'].map(direction=>{const list=services.filter(s=>s.direction===direction);return `<section><div class="service-group-label">${directionName(direction)}</div>${list.length?list.map(s=>`<button class="service-row" data-service="${s.key}"><span class="service-bus">Bus ${s.route.id}</span><div><strong>${s.stop.time}</strong><small>Turno ${s.shift.start}–${s.shift.end} · ${s.shift.shortDays}</small></div></button>`).join(''):'<p class="service-empty">Sin paso por esta parada en este sentido.</p>'}</section>`;}).join('')}</div>`;}
+  function renderStopResults(){const stops=Object.values(D.stops).filter(s=>C.services(D,s.id).length&&C.stopMatches(D,s.id,state.query)).sort((a,b)=>a.name.localeCompare(b.name,'es'));$('#resultCount').textContent=stops.length;if(!stops.length&&addressSearch){addressSearch.renderNoLocalMatches();return;}$('#resultList').innerHTML=stops.length?stops.map(s=>{const services=C.services(D,s.id),buses=[...new Set(services.map(x=>x.route.id))].sort((a,b)=>a-b);return `<button class="stop-result ${state.stopId===s.id?'selected':''}" data-pick-stop="${s.id}" aria-pressed="${state.stopId===s.id}"><span aria-hidden="true">${ICON_LOCATION}</span><div><strong>${esc(s.name)}</strong><small>${services.length} horarios · Ida y vuelta</small><div class="bus-chips">${buses.map(b=>`<span>BUS ${b}</span>`).join('')}</div></div><span aria-hidden="true">${ICON_RIGHT}</span></button>`;}).join(''):'<div class="empty-state"><strong>No hay paradas con ese nombre.</strong></div>';$$('[data-pick-stop]').forEach(b=>b.onclick=()=>chooseStop(b.dataset.pickStop,true));}
+  function nearbyDistance(meters){if(!Number.isFinite(meters))return '';if(meters<10)return 'menos de 10 m';if(meters<1000)return `${Math.round(meters/10)*10} m`;return `${new Intl.NumberFormat('es-ES',{maximumFractionDigits:meters<10000?1:0}).format(meters/1000)} km`;}
+  function serviceMarkup(stopId){
+    const services=C.services(D,stopId),view=addressSearch?.getView(),nearby=view?.origin?view.nearby.find(item=>item.stop.id===stopId):null;
+    const context=nearby?`<div class="nearby-context"><span class="micro">Desde la dirección elegida</span><p>${esc(view.origin.label)} · ${nearbyDistance(nearby.distanceMeters)} en línea recta</p></div>`:'';
+    return context+`<div class="service-groups">${['out','back'].map(direction=>{const list=services.filter(service=>service.direction===direction),distance=nearby?.directionDistances?.[direction];return `<section><div class="service-group-label">${directionName(direction)}${Number.isFinite(distance)?` · ${nearbyDistance(distance)}`:''}</div>${list.length?list.map(service=>`<button class="service-row" data-service="${service.key}"><span class="service-bus">Bus ${service.route.id}</span><div><strong>${service.stop.time}</strong><small>Turno ${service.shift.start}–${service.shift.end} · ${service.shift.shortDays}</small></div></button>`).join(''):'<p class="service-empty">Sin paso por esta parada en este sentido.</p>'}</section>`;}).join('')}</div>`;
+  }
   function wireServices(){ $$('[data-service]').forEach(b=>b.onclick=()=>{const [shift,direction,id]=b.dataset.service.split(':');setRoute(shift,direction,id,state.stopId);});}
   function detailKey(){return [state.mode,state.shift,state.direction,state.routeId,state.mode==='stops'?state.stopId:''].join(':');}
   function detailIsVisible(){return Boolean($('.workbench')?.getClientRects().length);}
@@ -2045,14 +2497,20 @@ window.BUS_NOTICES=[];
   }
   function paintDetail(){
     const workbench=$('.workbench');if(lastDetailKey&&lastDetailKey.split(':')[0]!==state.mode)workbench.scrollTop=0;
-    const r=currentRoute(),shift=currentShift(),stop=D.stops[state.stopId],overview=state.mode!=='routes',empty=overview&&!stop;
+    const r=currentRoute(),shift=currentShift(),stop=D.stops[state.stopId],overview=state.mode!=='routes',empty=overview&&!stop,searchView=addressSearch?.getView(),hasAddressSearch=searchView&&searchView.phase!=='idle';
     $('#routeBadge').innerHTML=overview?ICON_LOCATION:String(r.id).padStart(2,'0');
     $('#journeyDirection').textContent=overview?'Todos los turnos · Ida y vuelta':`${directionName(state.direction)} · ${state.direction==='out'?'A Coruña → Narón':'Narón → A Coruña'}`;
-    $('#routeTitle').textContent=overview?(stop?.name||'Todas las paradas'):`Bus ${r.id}`;
+    $('#routeTitle').textContent=overview?(stop?.name||(hasAddressSearch?'Paradas cercanas':'Todas las paradas')):`Bus ${r.id}`;
     $('#routeSubtitle').textContent=`${shift.shortDays} · Turno ${shift.start}–${shift.end}`;$('#routeSubtitle').hidden=false;$('#routeSubtitle').classList.toggle('is-reserved',overview);$('#routeSubtitle').setAttribute('aria-hidden',String(overview));
     $('#journeyBar').hidden=overview;$('#departureTime').textContent=r.stops[0].time;$('#arrivalTime').textContent=r.stops.at(-1).time;$('#departurePlace').textContent=routeOrigin(r);$('#arrivalPlace').textContent=destination(r);$('#journeyDuration').textContent=C.duration(r)+' min';$('#journeyStopCount').textContent=r.stops.length+' paradas';renderJourneyDuration(r);
     $('#mapStopTitle').textContent=stop?.name||'Todas las paradas';$('#stopsTitle').textContent=overview?'Buses de esta parada':'Todas las paradas';$('#stopsCount').textContent=empty?'':overview?C.services(D,state.stopId).length:r.stops.length;
     $('#stopsPanelHeader').hidden=empty;$('#stopEmpty').hidden=!empty;$('#reportButton').hidden=empty;$('.stops-panel').setAttribute('aria-labelledby',empty?'stopEmptyTitle':'stopsTitle');
+    if(empty){
+      const phase=searchView?.phase;
+      $('#stopEmptyTitle').textContent=phase==='choices'?'Elige una dirección':phase==='nearby'?'Selecciona una parada cercana':'Selecciona una parada';
+      $('#stopEmpty p').textContent=phase==='choices'?'Selecciona la ubicación que buscas para ver las paradas del servicio más próximas.':phase==='nearby'?'Elige una parada de la lista para consultar todos sus buses y horarios de ida y vuelta.':release==='1.1'?'Busca una parada o escribe una calle de A Coruña ciudad para encontrar los buses que te quedan más cerca.':'Busca una parada por su nombre o elígela en la lista para ver sus buses y horarios de ida y vuelta.';
+      $('#focusStopSearch').lastChild.textContent=release==='1.1'?'Buscar parada o dirección':'Buscar una parada';
+    }
     $('#stopTimeline').hidden=overview;$('#stopServices').hidden=!overview||empty;
     if(overview&&!empty){$('#stopServices').innerHTML=serviceMarkup(state.stopId);wireServices();}else if(!overview)renderTimeline();
     if(empty)$('#stopServices').innerHTML='';lastDetailKey=detailKey();
@@ -2187,7 +2645,12 @@ window.BUS_NOTICES=[];
     catch{if(!stillOpen())return;if(prefilled)renderForecast({...initial,stale:true},true);else renderForecastError();}
   }
   function showWeather(){openDialog('Hoy en A Coruña',alertSlot()+'<div class="forecast-loading" role="status">Cargando el pronóstico de hoy…</div>','weather');refreshForecast();loadWeatherAlerts();}
-  function showHelp(){openDialog('Ayuda','<p><strong>Horarios</strong><br>Elige sentido, turno y bus.</p><p><strong>Paradas</strong><br>Busca por nombre o pulsa una parada para consultar sus buses.</p><p><strong>Mapa</strong><br>Pulsa un marcador para ver buses y horarios.</p>');}
+  function showRelease(){
+    openDialog('Versión de la web',`<div class="release-options"><button class="release-choice" data-web-release="1.1" aria-pressed="${release==='1.1'}"><strong>Versión 1.1</strong><small>Busca paradas o calles de A Coruña ciudad y encuentra los buses más cercanos.</small></button><button class="release-choice" data-web-release="1.0" aria-pressed="${release==='1.0'}"><strong>Versión 1.0</strong><small>La búsqueda original, solo por nombres de parada.</small></button></div><p>La versión que elijas se conservará en este dispositivo.</p>`);
+    $$('[data-web-release]').forEach(button=>button.onclick=()=>{const next=button.dataset.webRelease;if(next===release)dismissDialog($('#appDialog'));else window.BusRelease.switchTo(next);});
+  }
+  function showHelp(){openDialog('Ayuda',`<p><strong>Horarios</strong><br>Elige sentido, turno y bus.</p><p><strong>Paradas</strong><br>${release==='1.1'?'Elige una sugerencia de parada o envía una dirección de A Coruña ciudad para buscar por cercanía. Las distancias se muestran en línea recta.':'Busca por nombre o pulsa una parada para consultar sus buses.'}</p><p><strong>Mapa</strong><br>Pulsa un marcador para ver buses y horarios.</p><button class="secondary-button" id="helpRelease">Versión ${release} · Cambiar</button>`);$('#helpRelease').onclick=async()=>{await dismissDialog($('#appDialog'));showRelease();};}
+
   function reportMailto(text){const r=currentRoute(),shift=currentShift(),isRoute=state.mode==='routes';const subject=isRoute?`Corrección Bus Pull&Bear · Bus ${r.id} · ${directionName(state.direction)}`:`Corrección Bus Pull&Bear · ${D.stops[state.stopId]?.name||'Sin parada seleccionada'}`;const context=isRoute?`Bus ${r.id} · ${directionName(state.direction)}\nTurno ${shift.start}–${shift.end} (${shift.days})`:'Consulta de todos los buses y turnos';const body=`Bus Pull&Bear\n${context}\nParada: ${D.stops[state.stopId]?.name||'Sin parada seleccionada'}\n\nDetalle de la corrección:\n${text}`;return `mailto:davidtcou@pullbear.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;}
   function showReport(){openDialog('Corregir un dato',`<label class="dialog-field"><span>¿Qué hay que corregir?</span><textarea id="reportText" placeholder="Indica el dato y la corrección…" required></textarea></label><a class="primary-button report-mail" id="sendReportMail" href="${reportMailto('')}">Abrir correo ${ICON_EXTERNAL}</a><p class="dialog-source" style="margin-top:14px">Para davidtcou@pullbear.com. Se abrirá tu aplicación de correo.</p>`);$('#reportText').oninput=e=>{e.target.setCustomValidity('');$('#sendReportMail').href=reportMailto(e.target.value.trim());};$('#sendReportMail').onclick=e=>{const field=$('#reportText');if(!field.value.trim()){e.preventDefault();field.setCustomValidity('Describe el dato que hay que corregir.');field.reportValidity();}};$('#reportText').focus();}
   function activeNotices(){return Array.isArray(window.BUS_NOTICES)?window.BUS_NOTICES.filter(notice=>notice&&typeof notice==='object'&&notice.active!==false&&(notice.text||notice.title)):[];}
@@ -2198,7 +2661,7 @@ window.BUS_NOTICES=[];
   $$('[data-direction]').forEach(b=>b.onclick=()=>{closeSuggestions();state.direction=b.dataset.direction;state.routeId=D.routes[state.shift][state.direction][0].id;state.stopId=currentRoute().stops[0].id;state.servicesOpen=false;render(true);});$('#shiftSelect').onchange=e=>{closeSuggestions();state.shift=e.target.value;state.routeId=D.routes[state.shift][state.direction][0].id;state.stopId=currentRoute().stops[0].id;state.servicesOpen=false;render(true);};
   $('#searchInput').oninput=e=>{state.query=e.target.value;renderControls();renderResults();scheduleSuggestions();};$('#searchInput').onfocus=()=>{if(state.query.trim().length>=2)scheduleSuggestions();};$('#clearSearch').onclick=()=>{state.query='';$('#searchInput').value='';closeSuggestions();renderControls();renderResults();$('#searchInput').focus();};
   $('#searchInput').onkeydown=e=>{if(e.key==='Escape'){closeSuggestions();return;}if(!suggestions.open)return;const options=$$('.suggestion');if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();suggestions.active=options.length?(suggestions.active<0?(e.key==='ArrowDown'?0:options.length-1):(suggestions.active+(e.key==='ArrowDown'?1:-1)+options.length)%options.length):-1;applyActiveSuggestion();}else if(e.key==='Enter'&&suggestions.active>=0){e.preventDefault();options[suggestions.active]?.click();}};document.addEventListener('pointerdown',e=>{if(!e.target.closest('.search-wrap'))closeSuggestions();});
-  $('.brand').onclick=e=>{e.preventDefault();setMode('routes');};$('#navRoutes').onclick=()=>setMode('routes');$('#navStops').onclick=()=>{setMode('stops');$('#searchInput').focus();};$('#openAllStops').onclick=()=>setMode('stops');$('#focusStopSearch').onclick=()=>$('#searchInput').focus({preventScroll:true});$('#helpButton').onclick=showHelp;$('#weatherButton').onclick=showWeather;$('#mobileWeatherButton').onclick=showWeather;
+  $('.brand').onclick=e=>{e.preventDefault();setMode('routes');};$('#navRoutes').onclick=()=>setMode('routes');$('#navStops').onclick=()=>{setMode('stops');$('#searchInput').focus();};$('#openAllStops').onclick=()=>setMode('stops');$('#focusStopSearch').onclick=()=>$('#searchInput').focus({preventScroll:true});$('#helpButton').onclick=showHelp;$('#releaseButton').onclick=showRelease;$('#weatherButton').onclick=showWeather;$('#mobileWeatherButton').onclick=showWeather;
   $('#openMap').onclick=openMap;$('#closeMap').onclick=()=>dismissDialog($('#mapDialog'));$('#mapOverview').onclick=()=>renderMap(true);$('#googleMap').onload=()=>{if($('#googleMap').src!=='about:blank'){clearTimeout(mapTimer);$('#mapLoading').hidden=true;}};$('#mobileBack').onclick=()=>{cancelDetailTransition();paintDetail();$('.workspace').classList.remove('mobile-detail');$('#searchInput').focus();};
   $('#reportButton').onclick=showReport;$('#closeDialog').onclick=()=>dismissDialog($('#appDialog'));['appDialog','mapDialog'].forEach(id=>{const dialog=$('#'+id);dialog.addEventListener('close',()=>lastFocused?.focus({preventScroll:true}));dialog.onclick=e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dismissDialog(dialog);}};});
   $('#appDialog').addEventListener('close',()=>{forecastResizeObserver?.disconnect();forecastResizeObserver=null;});
@@ -2208,6 +2671,19 @@ window.BUS_NOTICES=[];
   setInterval(()=>{if(document.hidden)return;refreshAlertDisplay();const dialog=$('#appDialog');if(dialog.open&&dialog.classList.contains('weather-dialog')&&forecastShownHour!==Math.floor(Date.now()/(60*60*1000)))refreshForecast(false,true);},60*1000);
   document.addEventListener('visibilitychange',()=>{if(!document.hidden){loadWeather();loadWeatherAlerts();}});
   detailMotionPreference.addEventListener?.('change',event=>{if(event.matches){cancelDetailTransition();paintDetail();}});
+  $('#releaseButton').textContent=`Versión ${release} · Cambiar`;
+  if(release==='1.1'){
+    $('#searchInput').placeholder='Parada o calle';$('#searchInput').setAttribute('aria-label','Buscar parada del servicio o calle de A Coruña ciudad');$('#searchInput').setAttribute('enterkeyhint','search');
+    addressSearch=window.BusAddressSearch.create({
+      data:D,core:C,geocoder:window.BusGeocoder,
+      getQuery:()=>state.query,setQuery:query=>{state.query=query;$('#searchInput').value=query;},getSelectedStop:()=>state.stopId,getMode:()=>state.mode,
+      onQueryChange:()=>{renderControls();renderResults();if(state.mode==='stops')renderDetail();},
+      onSearchStart:()=>{closeSuggestions();state.mode='stops';state.stopId=null;state.servicesOpen=false;$('.workspace').classList.remove('mobile-detail');render(true);},
+      onSearchUpdate:()=>{renderControls();renderResults();renderDetail();},
+      onChooseStop:(id,options={})=>{if(!options.fromNearby){addressSearch.reset();state.query='';$('#searchInput').value='';}state.mode='stops';renderControls();chooseStop(id,true);}
+    });
+    addressSearch.bind();
+  }
   render();renderNotice();loadWeather();loadWeatherAlerts();window.BusPlanner={state,render,chooseStop,setRoute,setMode,reportMailto,nextNotice,refreshNotices:renderNotice,openMap};
 })();
 
