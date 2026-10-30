@@ -657,7 +657,7 @@ dialog.is-closing::backdrop{animation:bus-backdrop-exit var(--motion-dialog-clos
   font-family:var(--font-reading);font-size:14px;line-height:1.45;color:var(--fg);
 }
 .forecast-table thead th{
-  position:sticky;top:0;z-index:2;padding:12px 14px;text-align:left;
+  position:sticky;top:-22px;z-index:2;padding:12px 14px;text-align:left;
   border-bottom:1px solid var(--border);background:var(--panel);color:var(--muted);
   font-family:var(--font-reading);font-size:12px;font-weight:500;line-height:1.4;letter-spacing:0;
 }
@@ -707,6 +707,7 @@ dialog.is-closing::backdrop{animation:bus-backdrop-exit var(--motion-dialog-clos
   .forecast-current strong{font-size:28px}
   .forecast-current>span{max-width:145px;font-size:12px}
   .forecast-table{table-layout:auto}
+  .forecast-table thead th{top:-18px}
   .forecast-table th,.forecast-table td{padding:12px 6px}
   .forecast-table th:first-child{width:54px}
   .forecast-table th:nth-child(2){width:50px}
