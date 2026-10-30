@@ -2361,7 +2361,7 @@ window.BUS_NOTICES=[];
         list.innerHTML=`<div class="search-status" data-state="loading" role="status"><p>${esc(loadingMessage)}</p></div>`;
       }else if(view.phase==='choices'){
         if(title)title.textContent='ELIGE UNA DIRECCIÓN';if(count)count.textContent=view.places.length;
-        list.innerHTML='<div class="search-status"><p>Confirma la dirección en A Coruña para ver sus paradas cercanas.</p></div><div class="address-results" role="group" aria-label="Direcciones de A Coruña encontradas">'+view.places.map((place,index)=>`<button type="button" class="address-choice" data-address-choice="${index}">${locationIcon}<div><strong>${esc(place.label)}</strong>${place.address&&place.address!==place.label?`<small>${esc(place.address)}</small>`:''}${place.approximate?'<small>Ubicación aproximada</small>':''}</div></button>`).join('')+'</div>';
+        list.innerHTML='<div class="address-results" role="group" aria-label="Direcciones de A Coruña encontradas">'+view.places.map((place,index)=>`<button type="button" class="address-choice" data-address-choice="${index}">${locationIcon}<div><strong>${esc(place.label)}</strong>${place.address&&place.address!==place.label?`<small>${esc(place.address)}</small>`:''}${place.approximate?'<small>Ubicación aproximada</small>':''}</div></button>`).join('')+'</div>';
         list.querySelectorAll('[data-address-choice]').forEach(button=>button.onclick=()=>choosePlace(view.places[Number(button.dataset.addressChoice)]));
       }else if(view.phase==='nearby'){
         if(title)title.textContent='PARADAS MÁS CERCANAS';if(count)count.textContent=view.nearby.length;
