@@ -624,103 +624,102 @@ dialog.is-closing::backdrop{animation:bus-backdrop-exit var(--motion-dialog-clos
   font-weight:400;line-height:1.7;letter-spacing:0;color:var(--muted);
 }
 .stop-empty>.secondary-button{display:inline-flex;align-items:center;gap:8px}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
-/* One scrolling dialog body keeps the title and close control in place. */
-#appDialog.weather-dialog{width:min(780px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:hidden}
+/* A compact horizontal forecast keeps the day in chronological order. */
+:root{--weather-yellow-ink:#f6d76e;--weather-orange-ink:#ffb17f;--weather-red-ink:#ff9d9d}
+:root[data-theme=light],:root[data-theme=ivory],:root[data-theme=clay],:root[data-theme=rose]{--weather-yellow-ink:#765100;--weather-orange-ink:#963d0b;--weather-red-ink:#a12a35}
+#appDialog.weather-dialog{width:min(1000px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:hidden}
 #appDialog.weather-dialog[open]{display:flex;flex-direction:column}
 #appDialog.weather-dialog>.dialog-top{flex:none}
-#appDialog.weather-dialog #dialogBody{
-  min-height:0;padding:22px 24px 24px;overflow:auto;overscroll-behavior:contain;
-  scrollbar-width:thin;scrollbar-color:var(--border) transparent;scroll-padding-top:48px;
-}
-.weather-forecast{min-width:0;color:var(--fg)}
-.forecast-summary{
-  display:flex;align-items:flex-start;justify-content:space-between;gap:24px;
-  margin-bottom:16px;padding-bottom:18px;border-bottom:1px solid var(--border-soft);
-}
+#appDialog.weather-dialog #dialogBody{min-height:0;padding:0 24px 20px;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:var(--border) transparent;scroll-padding-top:88px}
+.weather-forecast{min-width:0;padding-top:16px;color:var(--fg)}
+.forecast-summary{position:sticky;top:0;z-index:3;display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:12px;padding-bottom:12px;border-bottom:1px solid var(--border-soft);background:var(--panel)}
 .forecast-location{min-width:0}
-.forecast-location h3{
-  margin:0 0 5px;font-family:var(--font-heading);font-size:20px;font-weight:600;
-  font-stretch:118%;line-height:1.25;letter-spacing:-.02em;color:var(--fg);
-}
-#appDialog.weather-dialog .forecast-location p{margin:0;font-size:13px;line-height:1.6;color:var(--muted)}
-.forecast-current{display:grid;gap:4px;flex:none;text-align:right}
-.forecast-current strong{
-  font-family:var(--font-numbers);font-size:32px;font-weight:400;line-height:1.2;
-  letter-spacing:-.04em;font-variant-numeric:tabular-nums;color:var(--fg);
-}
-.forecast-current>span{max-width:220px;font-size:13px;line-height:1.5;color:var(--muted)}
-#appDialog.weather-dialog .forecast-note{margin:0 0 18px;font-size:13px;line-height:1.65;color:var(--muted)}
-.forecast-table-wrap{border:1px solid var(--border);border-radius:2px}
-.forecast-table{
-  width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0;
-  font-family:var(--font-reading);font-size:14px;line-height:1.45;color:var(--fg);
-}
-.forecast-table thead th{
-  position:sticky;top:-22px;z-index:2;padding:12px 14px;text-align:left;
-  border-bottom:1px solid var(--border);background:var(--panel);color:var(--muted);
-  font-family:var(--font-reading);font-size:12px;font-weight:500;line-height:1.4;letter-spacing:0;
-}
-.forecast-table td,.forecast-table tbody th{padding:14px;vertical-align:middle;border-bottom:1px solid var(--border-soft);text-align:left}
-.forecast-table tbody th{font-weight:400;background:transparent}
-.forecast-table th:first-child{width:100px}
-.forecast-table th:nth-child(3){width:108px}
-.forecast-table th:nth-child(4){width:150px}
-.forecast-table tbody tr:last-child td,.forecast-table tbody tr:last-child th{border-bottom:0}
-.forecast-hour-label{
-  display:block;font-family:var(--font-numbers);font-size:14px;font-weight:500;
-  letter-spacing:-.02em;line-height:1.4;font-variant-numeric:tabular-nums;white-space:nowrap;
-}
-.forecast-hour-now{display:block;margin-top:3px;font-size:12px;font-weight:500;line-height:1.4;color:var(--accent)}
-.forecast-condition{display:flex;align-items:center;gap:10px;min-width:0;font-size:14px;line-height:1.45}
-.forecast-condition .forecast-symbol,.forecast-symbol{display:block;width:24px;height:24px;flex:none;color:var(--fg)}
-.forecast-temperature{
-  font-family:var(--font-numbers);font-size:16px;font-weight:500;line-height:1.4;
-  font-variant-numeric:tabular-nums;letter-spacing:-.025em;white-space:nowrap;color:var(--fg);
-}
-.forecast-wind{display:flex;align-items:center;gap:8px;font-size:14px;line-height:1.45;font-variant-numeric:tabular-nums;color:var(--fg)}
-.forecast-wind small{font-size:12px;font-weight:400;line-height:1.45;color:var(--muted)}
-.forecast-table tr.is-current-hour td,.forecast-table tr.is-current-hour th{background:var(--accent-tint)}
-.forecast-table tr.is-past .forecast-hour-label,.forecast-table tr.is-past .forecast-condition,
-.forecast-table tr.is-past .forecast-temperature,.forecast-table tr.is-past .forecast-wind{color:var(--muted)}
-.forecast-loading,.forecast-error{
-  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:14px;
-  min-height:160px;padding:28px 24px;border:1px solid var(--border);border-radius:2px;
-  background:var(--elevated);font-size:14px;line-height:1.65;color:var(--muted);
-}
+.forecast-location h3{margin:0 0 4px;font-family:var(--font-heading);font-size:20px;font-weight:600;font-stretch:118%;line-height:1.25;letter-spacing:-.02em;color:var(--fg)}
+#appDialog.weather-dialog .forecast-location p{margin:0;font-size:13px;line-height:1.5;color:var(--muted)}
+.forecast-current{display:grid;gap:3px;flex:none;text-align:right}
+.forecast-current strong{font-family:var(--font-numbers);font-size:32px;font-weight:400;line-height:1.2;letter-spacing:-.04em;font-variant-numeric:tabular-nums;color:var(--fg)}
+.forecast-current>span{max-width:220px;font-size:13px;line-height:1.45;color:var(--muted)}
+#appDialog.weather-dialog .forecast-note{margin:0 0 12px;font-size:12px;line-height:1.55;color:var(--muted)}
+.forecast-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:10px}
+.forecast-toolbar h3{margin:0;font-family:var(--font-heading);font-size:17px;font-weight:600;font-stretch:110%;line-height:1.3;letter-spacing:-.02em;color:var(--fg)}
+#appDialog.weather-dialog .forecast-toolbar p{margin:0;font-size:13px;line-height:1.5;color:var(--muted)}
+.forecast-nav{display:flex;align-items:center;gap:6px;flex:none}
+.forecast-nav button{display:inline-grid;place-items:center;width:32px;height:32px;border:1px solid var(--border);border-radius:2px;background:var(--panel);color:var(--fg);transition:background-color 220ms var(--motion-ease),border-color 220ms var(--motion-ease),color 220ms var(--motion-ease)}
+.forecast-nav button:hover:not(:disabled){background:var(--hover);border-color:var(--accent-line)}
+.forecast-nav button:disabled{opacity:.4;cursor:default}
+.forecast-nav .ui-icon{display:block;width:16px;height:16px;stroke-width:1.5px;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}
+.forecast-hours{display:flex;align-items:stretch;gap:8px;min-width:0;margin:0 -2px;padding:2px 2px 12px;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;scroll-snap-type:x proximity;scroll-padding-inline:2px;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:var(--border) transparent}
+.forecast-hours:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.forecast-hour{display:flex;flex-direction:column;align-items:center;gap:6px;flex:0 0 116px;min-height:192px;padding:12px 10px;border:1px solid var(--border-soft);border-radius:2px;background:var(--panel);color:var(--fg);text-align:center;scroll-snap-align:start}
+.forecast-hour-heading{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:36px}
+.forecast-hour-label{display:block;font-family:var(--font-numbers);font-size:14px;font-weight:500;letter-spacing:-.02em;line-height:1.4;font-variant-numeric:tabular-nums;white-space:nowrap}
+.forecast-hour-now{display:block;min-height:16px;font-size:12px;font-weight:500;line-height:1.3;color:var(--accent)}
+.forecast-condition{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;min-width:0;min-height:64px;width:100%;font-size:13px;line-height:1.3}
+.forecast-condition .forecast-symbol,.forecast-symbol{display:block;width:24px;height:24px;flex:none;color:currentColor}
+.forecast-condition-label{display:block;min-height:34px;overflow-wrap:normal;color:inherit}
+.forecast-temperature{font-family:var(--font-numbers);font-size:22px;font-weight:500;line-height:1.2;font-variant-numeric:tabular-nums;letter-spacing:-.035em;white-space:nowrap;color:var(--fg)}
+.forecast-wind{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;column-gap:5px;row-gap:1px;min-height:20px;margin-top:auto;font-size:13px;line-height:1.4;font-variant-numeric:tabular-nums;color:var(--fg)}
+.forecast-wind small{font-size:12px;font-weight:400;line-height:1.4;color:var(--muted)}
+.forecast-wind .ui-icon{width:16px;height:16px;flex:none}
+.forecast-hour.is-current-hour{border-color:var(--accent-line);background:var(--accent-tint);box-shadow:inset 0 2px 0 var(--accent-line)}
+.forecast-hour.is-past .forecast-hour-label,.forecast-hour.is-past .forecast-condition,.forecast-hour.is-past .forecast-temperature,.forecast-hour.is-past .forecast-wind{color:var(--muted)}
+.forecast-loading,.forecast-error{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:14px;min-height:160px;padding:28px 24px;border:1px solid var(--border);border-radius:2px;background:var(--elevated);font-size:14px;line-height:1.65;color:var(--muted)}
 .forecast-error strong{font-weight:500;color:var(--fg)}
 .forecast-error button,.forecast-error .retryForecastbutton{align-self:flex-start}
-#appDialog.weather-dialog .forecast-credit{
-  margin:18px 0 0;padding-top:14px;border-top:1px solid var(--border-soft);
-  font-size:12px;line-height:1.6;color:var(--muted);
-}
+#appDialog.weather-dialog #dialogBody>.forecast-loading,#appDialog.weather-dialog #dialogBody>.forecast-error,#appDialog.weather-dialog #dialogBody>.forecast-alerts{margin-top:16px}
+#appDialog.weather-dialog #dialogBody>.forecast-alerts:not(:empty)+.forecast-loading,#appDialog.weather-dialog #dialogBody>.forecast-alerts:not(:empty)+.forecast-error{margin-top:0}
+#appDialog.weather-dialog .forecast-credit{margin:12px 0 0;padding-top:0;font-size:12px;line-height:1.6;color:var(--muted)}
 .forecast-credit a{color:var(--fg);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+
+/* Alert levels have readable text in both the dark and light palettes. */
+.forecast-alerts{display:grid;gap:8px;margin:0 0 14px}
+.forecast-alerts:empty,#forecastAlerts:empty{display:none}
+.weather-alert-yellow{--weather-alert-ink:var(--weather-yellow-ink)}
+.weather-alert-orange{--weather-alert-ink:var(--weather-orange-ink)}
+.weather-alert-red{--weather-alert-ink:var(--weather-red-ink)}
+.weather-alert{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid var(--border);border-left:3px solid var(--weather-alert-ink,var(--warn));border-radius:2px;background:var(--panel);background:color-mix(in srgb,var(--weather-alert-ink,var(--warn)) 8%,var(--panel));color:var(--fg)}
+.weather-alert>svg{display:block;width:20px;height:20px;flex:none;margin-top:1px;color:var(--weather-alert-ink,var(--warn));stroke-width:1.5px;stroke-linecap:round;stroke-linejoin:round}
+.weather-alert>div{min-width:0}
+#appDialog.weather-dialog .weather-alert strong{font-size:13px;font-weight:600;line-height:1.45;color:var(--weather-alert-ink,var(--warn))}
+#appDialog.weather-dialog .weather-alert p{margin:3px 0 5px;font-size:13px;line-height:1.55;color:var(--muted)}
+.weather-alert a{display:inline-flex;align-items:center;gap:5px;font-size:12px;line-height:1.5;color:var(--fg);text-decoration:underline;text-underline-offset:3px}
+.weather-alert a>svg{display:block;width:16px;height:16px;flex:none;stroke-width:1.5px;stroke-linecap:round;stroke-linejoin:round}
+.weather-widget[data-alert-level=yellow]{--weather-alert-ink:var(--weather-yellow-ink)}
+.weather-widget[data-alert-level=orange]{--weather-alert-ink:var(--weather-orange-ink)}
+.weather-widget[data-alert-level=red]{--weather-alert-ink:var(--weather-red-ink)}
+.weather-alert-badge{display:inline-flex;align-items:center;gap:5px;min-width:0;max-width:100%;margin-top:5px;padding:2px 6px;overflow:hidden;border:1px solid var(--weather-alert-ink,var(--border));border-radius:2px;background:var(--panel);background:color-mix(in srgb,var(--weather-alert-ink,var(--muted)) 9%,var(--panel));font-family:var(--font-reading);font-size:11px;font-weight:500;line-height:1.4;letter-spacing:0;color:var(--weather-alert-ink,var(--muted));white-space:nowrap}
+.weather-alert-badge>span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.weather-alert-badge .ui-icon{display:block;width:14px;height:14px;flex:none;stroke-width:1.5px;stroke-linecap:round;stroke-linejoin:round}
+.weather-alert-badge.is-unavailable{display:block;border-color:var(--border);background:var(--elevated);color:var(--muted);font-weight:400;text-overflow:ellipsis}
+
+@media(max-width:760px){
+  .weather-widget>span:last-child:has(>.weather-alert-badge:not([hidden])){display:grid;grid-template-columns:max-content minmax(0,1fr);column-gap:8px;row-gap:4px;align-items:center}
+  .weather-widget>span:last-child:has(>.weather-alert-badge:not([hidden]))>strong{grid-column:1;min-width:0}
+  .weather-widget>span:last-child:has(>.weather-alert-badge:not([hidden]))>small{grid-column:2;min-width:0}
+  .weather-widget>span:last-child:has(>.weather-alert-badge:not([hidden]))>.weather-alert-badge{grid-column:1/-1;justify-self:start;max-width:100%;margin-top:0}
+}
 
 @media(max-width:600px){
   .stop-empty{min-height:274px;padding:24px}
   .stop-empty-icon{width:36px;height:36px;margin-bottom:18px}
   #appDialog.weather-dialog{width:calc(100vw - 16px);max-height:calc(100dvh - 16px)}
   #appDialog.weather-dialog>.dialog-top{padding:16px}
-  #appDialog.weather-dialog #dialogBody{padding:18px 10px 20px}
-  .forecast-summary{gap:14px;margin-bottom:14px;padding-bottom:16px}
+  #appDialog.weather-dialog #dialogBody{padding:0 12px 18px}
+  .forecast-summary{gap:14px}
   .forecast-location h3{font-size:18px}
   .forecast-current strong{font-size:28px}
   .forecast-current>span{max-width:145px;font-size:12px}
-  .forecast-table{table-layout:auto}
-  .forecast-table thead th{top:-18px}
-  .forecast-table th,.forecast-table td{padding:12px 6px}
-  .forecast-table th:first-child{width:54px}
-  .forecast-table th:nth-child(2){width:50px}
-  .forecast-table th:nth-child(3){width:88px}
-  .forecast-table th:nth-child(4){width:auto}
-  .forecast-condition{justify-content:center;gap:0}
-  .forecast-condition-label{
-    position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
-    clip:rect(0,0,0,0);white-space:nowrap;border:0;
-  }
-  .forecast-temperature{font-size:15px}
-  .forecast-wind{flex-wrap:wrap;column-gap:6px;row-gap:2px;font-size:13px}
+  .forecast-toolbar{gap:10px}
+  #appDialog.weather-dialog .forecast-toolbar p{font-size:12px}
+  .forecast-hour{flex-basis:104px;min-height:192px;padding:12px 8px}
   .forecast-loading,.forecast-error{min-height:150px;padding:24px 18px}
+  .weather-alert{padding:11px 12px}
+}
+@media(prefers-reduced-motion:reduce){
+  .forecast-hours{scroll-behavior:auto}
+  .forecast-nav button{transition:none}
 }
 
 </style>
@@ -738,7 +737,7 @@ dialog.is-closing::backdrop{animation:bus-backdrop-exit var(--motion-dialog-clos
       <div class="list-heading"><span id="listTitle">BUSES DISPONIBLES</span><span id="resultCount" hidden aria-hidden="true">5</span></div><div id="resultList" class="result-list" aria-live="polite"></div><div class="planner-bottom"><button id="openAllStops">Ver todas las paradas <svg class="ui-icon all-stops-arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><path d="M4 12h16m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>
     </aside>
     <section class="workbench" aria-label="Bus y paradas">
-      <header class="detail-header"><button id="mobileBack" class="icon-button mobile-back" aria-label="Volver a los buses"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div class="route-badge" id="routeBadge">01</div><div class="detail-heading"><div class="micro" id="journeyDirection">Ida · A Coruña → Narón</div><h2 id="routeTitle">Bus 1</h2><p id="routeSubtitle">L–V · Turno 08:30–17:45</p></div><button id="weatherButton" class="weather-widget" aria-label="Tiempo actual de A Coruña"><span id="weatherIcon" aria-hidden="true">☁</span><span><strong id="weatherTemp">A Coruña</strong><small id="weatherCondition">Consultando el tiempo…</small></span></button></header>
+      <header class="detail-header"><button id="mobileBack" class="icon-button mobile-back" aria-label="Volver a los buses"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div class="route-badge" id="routeBadge">01</div><div class="detail-heading"><div class="micro" id="journeyDirection">Ida · A Coruña → Narón</div><h2 id="routeTitle">Bus 1</h2><p id="routeSubtitle">L–V · Turno 08:30–17:45</p></div><button id="weatherButton" class="weather-widget" aria-label="Tiempo actual de A Coruña"><span id="weatherIcon" aria-hidden="true">☁</span><span><strong id="weatherTemp">A Coruña</strong><small id="weatherCondition">Consultando el tiempo…</small><span id="weatherAlert" class="weather-alert-badge" hidden></span></span></button></header>
       <div class="journey-bar" id="journeyBar"><div class="journey-schedule"><div class="journey-endpoint"><span class="micro">Salida</span><strong id="departureTime">07:40</strong><span id="departurePlace">Plaza Pontevedra</span></div><div class="journey-connector"><span id="journeyDuration" title="Duración prevista del servicio">50 min</span><i></i><small id="journeyStopCount">3 paradas</small></div><div class="journey-endpoint"><span class="micro">Llegada</span><strong id="arrivalTime">08:30</strong><span id="arrivalPlace">Sede Pull&Bear</span></div></div><div class="journey-duration" id="journeyDurationInfo"><span class="micro">Duración del viaje</span><strong id="plannedDuration">50 min</strong></div></div>
       <div class="detail-grid"><section class="stops-panel" aria-labelledby="stopsTitle"><div class="stops-panel-header" id="stopsPanelHeader"><div class="stops-title-line"><h3 id="stopsTitle">Todas las paradas</h3><span id="stopsCount">3</span></div><button id="openMap" class="secondary-button"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><circle cx="12" cy="12" r="6" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Ver mapa</button></div><div id="stopEmpty" class="stop-empty" hidden><div class="stop-empty-icon" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></div><h3 id="stopEmptyTitle">Selecciona una parada</h3><p>Busca una parada por su nombre o elígela en la lista para ver sus buses y horarios de ida y vuelta.</p><button class="secondary-button" id="focusStopSearch"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.5 4.5"/></svg>Buscar una parada</button></div><div id="stopTimeline" class="stop-timeline"></div><div id="stopServices" class="stop-services" hidden></div><button id="reportButton" class="report-button"><span>¿Hay un dato incorrecto?</span><span class="report-link">Reportar</span></button></section></div>
     </section>
@@ -1784,7 +1783,84 @@ window.BUS_DATA = {
     const value=await weatherInFlight;
     return weatherSnapshot(value,value.cached,value.stale);
   }
-  root.BusLive={getWeather,weatherLabel,weatherIcon};
+  // Official MeteoGalicia map service: CORS-enabled, public, no API key.
+  // Zone IDs: https://www.meteogalicia.gal/datosred/infoweb/meteo/docs/adversos/DefinicionZonasAdversos_es.pdf
+  // Levels/types: https://www.meteogalicia.gal/datosred/infoweb/meteo/docs/rss/RSS_Adversos_es.pdf
+  // Only zones containing A Coruña city, including its coastal and maritime zones.
+  const ALERT_QUERY_URL='https://ideg.xunta.gal/meteogalicia/rest/services/Meteogalicia_Prediccion/AvisosExternos/MapServer/0/query';
+  const ALERT_SOURCE='MeteoGalicia · Xunta de Galicia';
+  const ALERT_ZONE_NAMES={213:'A Coruña',321:'Noroeste de A Coruña',316:'Provincia de A Coruña',320:'Galicia',338:'Coruña Noroeste (mar)',342:'Coruña Noroeste (mar y costa)',345:'Litoral A Coruña (mar)',347:'Litoral A Coruña (mar y costa)'};
+  const ALERT_ZONE_ORDER=[213,321,342,338,347,345,316,320];
+  const ALERT_TYPES={1:'Temperatura máxima',2:'Temperatura mínima',3:'Precipitación en 1 hora',4:'Precipitación en 12 horas',5:'Niebla',6:'Nieve',7:'Tormenta',8:'Racha máxima de viento',9:'Viento en el mar',10:'Oleaje'};
+  const ALERT_LEVELS={1:'yellow',2:'orange',3:'red'},ALERT_RANK={yellow:1,orange:2,red:3};
+  const ALERT_TTL=5*60*1000,MAX_ALERT_STALE_AGE=30*60*1000,ALERT_LOOKAHEAD=72*60*60*1000;
+  let alertsCache=null,alertsInFlight=null,alertsRequestVersion=0,alertsRefreshFailed=false;
+  function alertDate(value){
+    // ArcGIS esriFieldTypeDate values are UTC milliseconds, not Unix seconds.
+    if(typeof value==='number'&&Number.isFinite(value)){const date=new Date(value);return Number.isFinite(date.getTime())?date.toISOString():null;}
+    return typeof value==='string'?isoTime(value):null;
+  }
+  function alertIsRelevant(alert,now=Date.now()){
+    const start=Date.parse(alert?.startsAt),end=Date.parse(alert?.endsAt);
+    return !!ALERT_RANK[alert?.level]&&Number.isFinite(start)&&Number.isFinite(end)&&end>start&&end>now&&start<=now+ALERT_LOOKAHEAD;
+  }
+  function alertsSnapshot(value,stale=false,unavailable=false){
+    const now=Date.now(),alerts=Array.isArray(value?.alerts)?value.alerts.filter(alert=>alertIsRelevant(alert,now)).map(alert=>({...alert})):[];
+    alerts.sort((a,b)=>ALERT_RANK[b.level]-ALERT_RANK[a.level]||Date.parse(a.startsAt)-Date.parse(b.startsAt));
+    return {alerts,source:ALERT_SOURCE,checkedAt:value?.checkedAt||null,stale,unavailable};
+  }
+  function normalizeAlerts(data){
+    if(!data||data.error||!Array.isArray(data.features)||data.exceededTransferLimit===true)throw new Error('El servicio de avisos no ha devuelto una respuesta completa.');
+    const now=Date.now(),groups=new Map();
+    data.features.forEach(feature=>{
+      const item=feature?.attributes;
+      if(!item||!['idnivel','idzona','dataini','datafin','idtipoalerta'].every(key=>Object.prototype.hasOwnProperty.call(item,key)))throw new Error('El formato del aviso no es válido.');
+      const area=ALERT_ZONE_NAMES[item.idzona],level=ALERT_LEVELS[item.idnivel];
+      if(!area||!level)return;
+      const startsAt=alertDate(item.dataini),endsAt=alertDate(item.datafin);
+      if(!startsAt||!endsAt||Date.parse(endsAt)<=Date.parse(startsAt))throw new Error('Las fechas del aviso no son válidas.');
+      const id=['meteogalicia',item.idalerta??'',item.idtipoalerta,level,startsAt,endsAt].join(':');
+      const sourceParams=new URLSearchParams({request_locale:'es'});
+      if(Number.isInteger(item.idalerta)&&item.idalerta>0)sourceParams.set('idAlerta',item.idalerta);
+      if(Number.isInteger(item.idtipoalerta))sourceParams.set('idTipoAlerta',item.idtipoalerta);
+      const alert={id,level,title:ALERT_TYPES[item.idtipoalerta]||'Aviso meteorológico',description:'',area,startsAt,endsAt,sourceUrl:'https://www.meteogalicia.gal/web/adversos/adversosIndex.action?'+sourceParams};
+      if(alertIsRelevant(alert,now)){
+        const existing=groups.get(id),zoneOrder=ALERT_ZONE_ORDER.indexOf(Number(item.idzona));
+        // Overlapping city/regional/provincial records describe one warning.
+        // Keep the most specific official area that contains A Coruña.
+        if(!existing||zoneOrder<existing.zoneOrder)groups.set(id,{alert,zoneOrder});
+      }
+    });
+    return {alerts:[...groups.values()].map(group=>group.alert),source:ALERT_SOURCE,checkedAt:new Date().toISOString()};
+  }
+  function readStoredAlerts(){
+    try{const value=JSON.parse(root.localStorage?.getItem('pb-weather-alerts-v1')||'null');return value&&Array.isArray(value.alerts)&&Number.isFinite(Date.parse(value.checkedAt))?value:null;}catch{return null;}
+  }
+  function alertCacheAge(value){return value?Date.now()-Date.parse(value.checkedAt):Infinity;}
+  async function requestWeatherAlerts(force){
+    const version=++alertsRequestVersion;
+    const params=new URLSearchParams({f:'json',where:'idnivel IN (1,2,3) AND idzona IN ('+Object.keys(ALERT_ZONE_NAMES).join(',')+')',outFields:'idnivel,gid,idzona,dataini,datafin,idtipoalerta,idalerta',returnGeometry:'false'});
+    try{
+      const value=normalizeAlerts(await getJSON(ALERT_QUERY_URL+'?'+params,undefined,force));
+      if(version===alertsRequestVersion){alertsCache=value;alertsRefreshFailed=false;try{root.localStorage?.setItem('pb-weather-alerts-v1',JSON.stringify(value));}catch{}}
+      return alertsSnapshot(value);
+    }catch{
+      if(version===alertsRequestVersion)alertsRefreshFailed=true;
+      const fallback=alertsCache||readStoredAlerts(),age=alertCacheAge(fallback);
+      if(age>=0&&age<=MAX_ALERT_STALE_AGE)return alertsSnapshot(fallback,true,true);
+      return {alerts:[],source:ALERT_SOURCE,checkedAt:fallback?.checkedAt||null,stale:!!fallback,unavailable:true};
+    }
+  }
+  async function getWeatherAlerts({force=false}={}){
+    if(!alertsCache)alertsCache=readStoredAlerts();
+    const age=alertCacheAge(alertsCache);
+    if(!force&&!alertsRefreshFailed&&age>=0&&age<ALERT_TTL)return alertsSnapshot(alertsCache);
+    if(force)return requestWeatherAlerts(true);
+    if(!alertsInFlight){const request=requestWeatherAlerts(false);alertsInFlight=request;const release=()=>{if(alertsInFlight===request)alertsInFlight=null;};request.then(release,release);}
+    const value=await alertsInFlight;
+    return alertsSnapshot(value,value.stale,value.unavailable);
+  }
+  root.BusLive={getWeather,getWeatherAlerts,weatherLabel,weatherIcon};
 })(typeof window!=='undefined'?window:globalThis);
 
 </script>
@@ -1883,7 +1959,7 @@ window.BUS_NOTICES=[];
   const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const ICON_LOCATION='<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg>',ICON_RIGHT='<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m9 6 6 6-6 6"/></svg>',ICON_EXTERNAL='<svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6m0-6L10 14M10 4H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-4"/></svg>';
-  const state={shift:'early',direction:'out',routeId:1,stopId:'pontevedra',query:'',mode:'routes',servicesOpen:false,weather:null,noticeIndex:0};
+  const state={shift:'early',direction:'out',routeId:1,stopId:'pontevedra',query:'',mode:'routes',servicesOpen:false,weather:null,weatherAlerts:null,noticeIndex:0};
   const suggestions={open:false,local:[],active:-1};
   let mapTimer,lastMapKey='',lastDetailKey='',lastFocused=null;
   const detailMotion={epoch:0,phase:'idle',animations:[],gridWasInert:false,includeWeather:false};
@@ -2005,11 +2081,45 @@ window.BUS_NOTICES=[];
   function updateWeatherWidget(weather){
     if(state.weather&&Date.parse(state.weather.time)>Date.parse(weather.time))return;
     state.weather=weather;$('#weatherIcon').textContent=weather.icon;$('#weatherTemp').textContent=`A Coruña · ${Math.round(weather.temperature)} °C`;$('#weatherCondition').textContent=`${weather.label} · ${formatTime(weather.time)}`;
-    $('#weatherButton').setAttribute('aria-label',`Tiempo de A Coruña: ${Math.round(weather.temperature)} grados, ${weather.label}. Ver el pronóstico de hoy por horas`);
+    updateWeatherAlertWidget();
   }
-  async function loadWeather(){try{const weather=await L.getWeather();updateWeatherWidget(weather);return weather;}catch{$('#weatherTemp').textContent='A Coruña';$('#weatherCondition').textContent='Tiempo no disponible';$('#weatherButton').setAttribute('aria-label','Consultar el pronóstico de hoy en A Coruña');return null;}}
+  async function loadWeather(){try{const weather=await L.getWeather();updateWeatherWidget(weather);return weather;}catch{$('#weatherTemp').textContent='A Coruña';$('#weatherCondition').textContent='Tiempo no disponible';updateWeatherAlertWidget();return null;}}
+  const alertLevels={yellow:'amarillo',orange:'naranja',red:'rojo'},alertRank={yellow:1,orange:2,red:3};
+  const ICON_WARNING='<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m10.3 3.5-8 14A2 2 0 0 0 4 20.5h16a2 2 0 0 0 1.7-3l-8-14a2 2 0 0 0-3.4 0Z"/><path d="M12 8v5m0 3h.01"/></svg>';
+  function currentAlerts(){const now=Date.now();return (state.weatherAlerts?.alerts||[]).filter(alert=>alertLevels[alert.level]&&Number.isFinite(Date.parse(alert.startsAt))&&Number.isFinite(Date.parse(alert.endsAt))&&Date.parse(alert.endsAt)>now).sort((a,b)=>alertRank[b.level]-alertRank[a.level]||Date.parse(a.startsAt)-Date.parse(b.startsAt));}
+  function updateWeatherAlertWidget(){
+    const button=$('#weatherButton'),badge=$('#weatherAlert'),alerts=currentAlerts(),primary=alerts[0],unavailable=state.weatherAlerts?.unavailable||state.weatherAlerts?.stale;
+    button.classList.toggle('has-weather-alert',!!primary);if(primary)button.dataset.alertLevel=primary.level;else delete button.dataset.alertLevel;
+    badge.hidden=!primary&&!unavailable;badge.classList.toggle('is-unavailable',!primary);
+    const startsLater=primary&&Date.parse(primary.startsAt)>Date.now(),when=startsLater?(localForecastDate(primary.startsAt)===localForecastDate()?' · '+formatTime(primary.startsAt):' · '+new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'short',timeZone:'Europe/Madrid'}).format(new Date(primary.startsAt))):'';
+    badge.innerHTML=primary?`${ICON_WARNING}<span>Aviso ${alertLevels[primary.level]}${state.weatherAlerts?.stale?' · sin actualizar':when}</span>`:unavailable?'Avisos no disponibles':'';
+    badge.title=primary?`${primary.title} · ${primary.area||'A Coruña'}`:'';
+    const weather=state.weather,base=weather?`Tiempo de A Coruña: ${Math.round(weather.temperature)} grados, ${weather.label}.`:'Tiempo de A Coruña.';
+    button.setAttribute('aria-label',`${base}${primary?` Aviso ${alertLevels[primary.level]}: ${primary.title}. ${alertPeriod(primary)}.${state.weatherAlerts?.stale?' Datos sin actualizar.':''}`:unavailable?' Avisos no disponibles.':''} Ver el pronóstico de hoy por horas`);
+  }
+  function alertPeriod(alert){
+    const start=Date.parse(alert.startsAt),end=Date.parse(alert.endsAt),now=Date.now(),dayTime=value=>new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Madrid'}).format(new Date(value));
+    if(!Number.isFinite(start)||!Number.isFinite(end))return '';
+    const sameDay=localForecastDate(start)===localForecastDate(end),times=sameDay?`${formatTime(start)}–${formatTime(end)}`:`${dayTime(start)} – ${dayTime(end)}`;
+    return `${start>now?'Previsto':'En vigor'} · ${sameDay&&localForecastDate(start)!==localForecastDate()?dayTime(start).split(',')[0]+' · ':''}${times}`;
+  }
+  function alertMarkup(){
+    const snapshot=state.weatherAlerts,alerts=currentAlerts();
+    if(!snapshot)return '<p class="forecast-note" role="status">Consultando avisos oficiales…</p>';
+    if(!alerts.length)return snapshot.unavailable||snapshot.stale?'<p class="forecast-note" role="status">No se han podido actualizar los avisos oficiales.</p>':'';
+    return alerts.map(alert=>{const url=/^https:\/\//.test(alert.sourceUrl||'')?alert.sourceUrl:null;return `<article class="weather-alert weather-alert-${alert.level}">${ICON_WARNING}<div><strong>Aviso ${alertLevels[alert.level]} · ${esc(alert.title)}</strong><p>${esc(alert.area||'A Coruña')} · ${esc(alertPeriod(alert))}</p>${alert.description?`<p>${esc(alert.description)}</p>`:''}${snapshot.stale?'<p>Datos guardados. No se han podido actualizar.</p>':''}${url?`<a href="${esc(url)}" target="_blank" rel="noopener">${esc(snapshot.source||'Fuente oficial')}${ICON_EXTERNAL}</a>`:''}</div></article>`;}).join('');
+  }
+  function alertSlot(){return `<div id="forecastAlerts" class="forecast-alerts" aria-live="polite">${alertMarkup()}</div>`;}
+  let weatherAlertRequest=0;
+  const alertMarkupCache=new WeakMap();
+  function refreshAlertDisplay(){updateWeatherAlertWidget();const target=$('#forecastAlerts');if(target&&$('#appDialog').open&&$('#appDialog').classList.contains('weather-dialog')){const html=alertMarkup();if(alertMarkupCache.get(target)!==html){target.innerHTML=html;alertMarkupCache.set(target,html);}}}
+  async function loadWeatherAlerts(force=false){
+    const id=++weatherAlertRequest;let snapshot;
+    try{snapshot=await L.getWeatherAlerts({force});}catch{snapshot={...(state.weatherAlerts||{alerts:[]}),unavailable:true,stale:true};}
+    if(id!==weatherAlertRequest)return;state.weatherAlerts=snapshot;refreshAlertDisplay();
+  }
   const forecastDateFormatter=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'});
-  let forecastRequest=0,forecastShownHour=-1;
+  let forecastRequest=0,forecastShownHour=-1,forecastRenderedDate=null,forecastResizeObserver=null;
   function localForecastDate(value=Date.now()){const parts=forecastDateFormatter.formatToParts(new Date(value)),part=type=>parts.find(item=>item.type===type)?.value;return `${part('year')}-${part('month')}-${part('day')}`;}
   function forecastHours(weather){const today=localForecastDate();return Array.isArray(weather?.hours)?weather.hours.filter(hour=>hour?.timeISO&&Number.isFinite(Date.parse(hour.timeISO))&&localForecastDate(hour.timeISO)===today):[];}
   function hasForecast(weather){const age=Date.now()-Date.parse(weather?.time);return Number.isFinite(age)&&age>=-15*60*1000&&age<=2*60*60*1000&&forecastHours(weather).length>0;}
@@ -2026,30 +2136,43 @@ window.BUS_NOTICES=[];
     else drawing=cloud;
     return `<svg class="ui-icon forecast-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${drawing}</svg>`;
   }
-  function forecastError(){return '<div class="forecast-error" role="status"><strong>No se ha podido cargar el pronóstico por horas.</strong><span>Comprueba la conexión y vuelve a intentarlo.</span><button class="secondary-button retryForecastbutton" id="retryForecast">Reintentar</button></div><p class="forecast-credit">Datos de <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>.</p>';}
-  function renderForecastError(){const body=$('#dialogBody');body.innerHTML=forecastError();body.scrollTop=0;$('#retryForecast').onclick=()=>refreshForecast(true);}
+  function forecastError(){return alertSlot()+'<div class="forecast-error" role="status"><strong>No se ha podido cargar el pronóstico por horas.</strong><span>Comprueba la conexión y vuelve a intentarlo.</span><button class="secondary-button retryForecastbutton" id="retryForecast">Reintentar</button></div><p class="forecast-credit">Datos de <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>.</p>';}
+  function renderForecastError(){const body=$('#dialogBody');body.innerHTML=forecastError();body.scrollTop=0;$('#retryForecast').onclick=()=>{refreshForecast(true);loadWeatherAlerts(true);};}
+  function wireForecastNavigation(savedLeft){
+    const strip=$('#forecastHours'),previous=$('#forecastPrevious'),next=$('#forecastNext');
+    forecastResizeObserver?.disconnect();forecastResizeObserver=null;
+    if(!strip)return;
+    const behavior=()=>detailMotionPreference.matches?'instant':'smooth';
+    const sync=()=>{previous.disabled=strip.scrollLeft<=2;next.disabled=strip.scrollLeft+strip.clientWidth>=strip.scrollWidth-2;};
+    const move=direction=>strip.scrollBy({left:direction*Math.max(116,strip.clientWidth*.75),behavior:behavior()});
+    previous.onclick=()=>move(-1);next.onclick=()=>move(1);strip.addEventListener('scroll',sync,{passive:true});
+    strip.onkeydown=event=>{if(!['ArrowLeft','ArrowRight','Home','End'].includes(event.key))return;event.preventDefault();if(event.key==='Home'||event.key==='End')strip.scrollTo({left:event.key==='Home'?0:strip.scrollWidth,behavior:behavior()});else move(event.key==='ArrowLeft'?-1:1);};
+    const hour=strip.querySelector('.is-current-hour'),initialLeft=savedLeft!==null?savedLeft:hour?Math.max(0,hour.getBoundingClientRect().left-strip.getBoundingClientRect().left+strip.scrollLeft):0;
+    strip.scrollTo({left:initialLeft,behavior:'instant'});
+    sync();if(window.ResizeObserver){forecastResizeObserver=new ResizeObserver(sync);forecastResizeObserver.observe(strip);}
+  }
   function renderForecast(weather,preserveScroll=false){
     const hours=forecastHours(weather);if(!hours.length){renderForecastError();return;}
-    const body=$('#dialogBody'),savedScroll=body.scrollTop,now=Date.now(),date=new Intl.DateTimeFormat('es-ES',{weekday:'long',day:'numeric',month:'long',timeZone:'Europe/Madrid'}).format(new Date());
+    const body=$('#dialogBody'),focusedId=body.contains(document.activeElement)?document.activeElement.id:null,sameDay=forecastRenderedDate===localForecastDate(),savedScroll=preserveScroll&&sameDay?body.scrollTop:0,savedLeft=preserveScroll&&sameDay&&$('#forecastHours')?$('#forecastHours').scrollLeft:null,now=Date.now(),date=new Intl.DateTimeFormat('es-ES',{weekday:'long',day:'numeric',month:'long',timeZone:'Europe/Madrid'}).format(new Date());
     const compass=['N','NE','E','SE','S','SO','O','NO'];
-    const rows=hours.map(hour=>{
+    const cards=hours.map(hour=>{
       const time=Date.parse(hour.timeISO),current=now>=time&&now<time+60*60*1000,past=time+60*60*1000<=now,label=hour.label||'Sin datos',temperature=Number.isFinite(hour.temperature)?`${Math.round(hour.temperature)} °C`:'—',wind=Number.isFinite(hour.windSpeed)?`${Math.round(hour.windSpeed)} km/h`:'—',direction=Number.isFinite(hour.windDirection)?compass[Math.round(hour.windDirection/45)%8]:'';
-      return `<tr class="${current?'is-current-hour':past?'is-past':''}"><th scope="row"><span class="forecast-hour-label">${formatTime(hour.timeISO)}</span>${current?'<span class="forecast-hour-now">Ahora</span>':''}</th><td><span class="forecast-condition">${weatherSymbol(hour.weatherCode,hour.isDay)}<span class="forecast-condition-label">${esc(label)}</span></span></td><td><span class="forecast-temperature">${temperature}</span></td><td><span class="forecast-wind"><span>${wind}</span>${direction&&Number.isFinite(hour.windSpeed)?`<small title="Dirección del viento">${direction}</small>`:''}</span></td></tr>`;
+      return `<article class="forecast-hour ${current?'is-current-hour':past?'is-past':''}" role="listitem"${current?' aria-current="time"':''}><div class="forecast-hour-heading"><time class="forecast-hour-label" datetime="${esc(hour.timeISO)}">${formatTime(hour.timeISO)}</time><span class="forecast-hour-now">${current?'Ahora':''}</span></div><span class="forecast-condition">${weatherSymbol(hour.weatherCode,hour.isDay)}<span class="forecast-condition-label">${esc(label)}</span></span><span class="forecast-temperature">${temperature}</span><span class="forecast-wind"><span class="sr-only">Viento </span><span>${wind}</span>${direction&&Number.isFinite(hour.windSpeed)?`<small title="Dirección del viento">${direction}</small>`:''}</span></article>`;
     }).join('');
-    body.innerHTML=`<section class="weather-forecast"><div class="forecast-summary"><div class="forecast-location"><h3>Hoy por horas</h3><p>${esc(date)}</p></div><div class="forecast-current"><strong>${Math.round(weather.temperature)} °C</strong><span>${esc(weather.label)}</span></div></div>${weather.stale?`<p class="forecast-note" role="status">Datos guardados de las ${formatTime(weather.time)}. No se han podido actualizar.</p>`:''}<div class="forecast-table-wrap"><table class="forecast-table" aria-label="Pronóstico de hoy por horas en A Coruña"><thead><tr><th scope="col">Hora</th><th scope="col">Tiempo</th><th scope="col">Temperatura</th><th scope="col">Viento</th></tr></thead><tbody>${rows}</tbody></table></div><p class="forecast-credit">Hora local de A Coruña · Datos de <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></p></section>`;
-    if(preserveScroll)body.scrollTop=savedScroll;
-    else{const row=body.querySelector('.is-current-hour');if(row){const head=body.querySelector('thead');body.scrollTop=Math.max(0,row.getBoundingClientRect().top-body.getBoundingClientRect().top+body.scrollTop-(head?.getBoundingClientRect().height||42)-10);}else body.scrollTop=0;}
+    const leftIcon='<svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m14 6-6 6 6 6"/></svg>';
+    body.innerHTML=`<section class="weather-forecast"><div class="forecast-summary"><div class="forecast-location"><h3>Hoy por horas</h3><p>${esc(date)}</p></div><div class="forecast-current"><strong>${Math.round(weather.temperature)} °C</strong><span>${esc(weather.label)}</span></div></div>${alertSlot()}${weather.stale?`<p class="forecast-note" role="status">Datos guardados de las ${formatTime(weather.time)}. No se han podido actualizar.</p>`:''}<div class="forecast-toolbar"><p id="forecastScrollHint">Desliza para recorrer el día</p><div class="forecast-nav"><button id="forecastPrevious" class="icon-button" aria-label="Horas anteriores" aria-controls="forecastHours">${leftIcon}</button><button id="forecastNext" class="icon-button" aria-label="Horas siguientes" aria-controls="forecastHours">${ICON_RIGHT}</button></div></div><div id="forecastHours" class="forecast-hours" role="list" tabindex="0" aria-label="Pronóstico de hoy por horas en A Coruña" aria-describedby="forecastScrollHint">${cards}</div><p class="forecast-credit">Hora local de A Coruña · Datos de <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></p></section>`;
+    forecastRenderedDate=localForecastDate();body.scrollTop=savedScroll;wireForecastNavigation(savedLeft);const restoreFocus=focusedId?document.getElementById(focusedId):null;if(restoreFocus&&!restoreFocus.disabled)restoreFocus.focus({preventScroll:true});
   }
   async function refreshForecast(force=false,preserveScroll=false){
     forecastShownHour=Math.floor(Date.now()/(60*60*1000));
     const id=++forecastRequest,dialog=$('#appDialog'),initial=state.weather,prefilled=!force&&hasForecast(initial);
     if(prefilled)renderForecast(initial,preserveScroll);
-    else{$('#dialogBody').innerHTML='<div class="forecast-loading" role="status">Cargando el pronóstico de hoy…</div>';$('#dialogBody').scrollTop=0;}
+    else{$('#dialogBody').innerHTML=alertSlot()+'<div class="forecast-loading" role="status">Cargando el pronóstico de hoy…</div>';$('#dialogBody').scrollTop=0;}
     const stillOpen=()=>id===forecastRequest&&dialog.open&&dialog.classList.contains('weather-dialog');
     try{const weather=await L.getWeather({force});if(!stillOpen())return;updateWeatherWidget(weather);if(hasForecast(weather))renderForecast(weather,prefilled||preserveScroll);else renderForecastError();}
     catch{if(!stillOpen())return;if(prefilled)renderForecast({...initial,stale:true},true);else renderForecastError();}
   }
-  function showWeather(){openDialog('Hoy en A Coruña','<div class="forecast-loading" role="status">Cargando el pronóstico de hoy…</div>','weather');refreshForecast();}
+  function showWeather(){openDialog('Hoy en A Coruña',alertSlot()+'<div class="forecast-loading" role="status">Cargando el pronóstico de hoy…</div>','weather');refreshForecast();loadWeatherAlerts();}
   function showHelp(){openDialog('Ayuda','<p><strong>Horarios</strong><br>Elige sentido, turno y bus.</p><p><strong>Paradas</strong><br>Busca por nombre o pulsa una parada para consultar sus buses.</p><p><strong>Mapa</strong><br>Pulsa un marcador para ver buses y horarios.</p>');}
   function reportMailto(text){const r=currentRoute(),shift=currentShift(),isRoute=state.mode==='routes';const subject=isRoute?`Corrección Bus Pull&Bear · Bus ${r.id} · ${directionName(state.direction)}`:`Corrección Bus Pull&Bear · ${D.stops[state.stopId]?.name||'Sin parada seleccionada'}`;const context=isRoute?`Bus ${r.id} · ${directionName(state.direction)}\nTurno ${shift.start}–${shift.end} (${shift.days})`:'Consulta de todos los buses y turnos';const body=`Bus Pull&Bear\n${context}\nParada: ${D.stops[state.stopId]?.name||'Sin parada seleccionada'}\n\nDetalle de la corrección:\n${text}`;return `mailto:davidtcou@pullbear.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;}
   function showReport(){openDialog('Corregir un dato',`<label class="dialog-field"><span>¿Qué hay que corregir?</span><textarea id="reportText" placeholder="Indica el dato y la corrección…" required></textarea></label><a class="primary-button report-mail" id="sendReportMail" href="${reportMailto('')}">Abrir correo ${ICON_EXTERNAL}</a><p class="dialog-source" style="margin-top:14px">Para davidtcou@pullbear.com. Se abrirá tu aplicación de correo.</p>`);$('#reportText').oninput=e=>{e.target.setCustomValidity('');$('#sendReportMail').href=reportMailto(e.target.value.trim());};$('#sendReportMail').onclick=e=>{const field=$('#reportText');if(!field.value.trim()){e.preventDefault();field.setCustomValidity('Describe el dato que hay que corregir.');field.reportValidity();}};$('#reportText').focus();}
@@ -2064,12 +2187,14 @@ window.BUS_NOTICES=[];
   $('.brand').onclick=e=>{e.preventDefault();setMode('routes');};$('#navRoutes').onclick=()=>setMode('routes');$('#navStops').onclick=()=>{setMode('stops');$('#searchInput').focus();};$('#openAllStops').onclick=()=>setMode('stops');$('#focusStopSearch').onclick=()=>$('#searchInput').focus({preventScroll:true});$('#helpButton').onclick=showHelp;$('#weatherButton').onclick=showWeather;
   $('#openMap').onclick=openMap;$('#closeMap').onclick=()=>dismissDialog($('#mapDialog'));$('#mapOverview').onclick=()=>renderMap(true);$('#googleMap').onload=()=>{if($('#googleMap').src!=='about:blank'){clearTimeout(mapTimer);$('#mapLoading').hidden=true;}};$('#mobileBack').onclick=()=>{cancelDetailTransition();paintDetail();$('.workspace').classList.remove('mobile-detail');$('#searchInput').focus();};
   $('#reportButton').onclick=showReport;$('#closeDialog').onclick=()=>dismissDialog($('#appDialog'));['appDialog','mapDialog'].forEach(id=>{const dialog=$('#'+id);dialog.addEventListener('close',()=>lastFocused?.focus({preventScroll:true}));dialog.onclick=e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dismissDialog(dialog);}};});
+  $('#appDialog').addEventListener('close',()=>{forecastResizeObserver?.disconnect();forecastResizeObserver=null;});
   const noticeText=$('#noticeText'),previousNotice=$('#previousNotice'),nextNoticeButton=$('#nextNotice'),pauseNotice=$('#pauseNotice'),noticeStrip=$('#noticeStrip');
   if(noticeText)noticeText.onclick=showNotice;if(previousNotice)previousNotice.onclick=()=>nextNotice(-1);if(nextNoticeButton)nextNoticeButton.onclick=()=>nextNotice();if(pauseNotice)pauseNotice.onclick=()=>{noticePaused=!noticePaused;renderNotice();};if(noticeStrip){noticeStrip.onmouseenter=()=>noticeHovered=true;noticeStrip.onmouseleave=()=>noticeHovered=false;noticeStrip.onfocusin=()=>noticeFocused=true;noticeStrip.onfocusout=e=>{noticeFocused=noticeStrip.contains(e.relatedTarget);};}noticeMotion.addEventListener?.('change',event=>{if(event.matches)noticePaused=true;renderNotice();});
-  setInterval(()=>{if(!document.hidden)loadWeather();},15*60*1000);
-  setInterval(()=>{const dialog=$('#appDialog');if(!document.hidden&&dialog.open&&dialog.classList.contains('weather-dialog')&&forecastShownHour!==Math.floor(Date.now()/(60*60*1000)))refreshForecast(false,true);},60*1000);
+  setInterval(()=>{if(!document.hidden){loadWeather();loadWeatherAlerts();}},15*60*1000);
+  setInterval(()=>{if(document.hidden)return;refreshAlertDisplay();const dialog=$('#appDialog');if(dialog.open&&dialog.classList.contains('weather-dialog')&&forecastShownHour!==Math.floor(Date.now()/(60*60*1000)))refreshForecast(false,true);},60*1000);
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden){loadWeather();loadWeatherAlerts();}});
   detailMotionPreference.addEventListener?.('change',event=>{if(event.matches){cancelDetailTransition();paintDetail();}});
-  render();renderNotice();loadWeather();window.BusPlanner={state,render,chooseStop,setRoute,setMode,reportMailto,nextNotice,refreshNotices:renderNotice,openMap};
+  render();renderNotice();loadWeather();loadWeatherAlerts();window.BusPlanner={state,render,chooseStop,setRoute,setMode,reportMailto,nextNotice,refreshNotices:renderNotice,openMap};
 })();
 
 </script>
