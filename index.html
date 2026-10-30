@@ -569,6 +569,7 @@ dialog.is-closing::backdrop{animation:bus-backdrop-exit var(--motion-dialog-clos
 .route-result.selected:before{display:none}
 
 /* Shared slots keep the header stable when the view and title change. */
+:root{--weather-opacity:.94}
 .workbench,.result-list{scrollbar-gutter:stable}
 .workbench{overflow-anchor:none}
 .detail-header{display:grid;grid-template-columns:44px minmax(0,1fr) 200px;grid-template-areas:"badge heading weather";align-items:center;column-gap:14px;row-gap:0;min-height:104px;padding:0 0 22px}
@@ -578,7 +579,7 @@ dialog.is-closing::backdrop{animation:bus-backdrop-exit var(--motion-dialog-clos
 .detail-heading>h2{margin:0;font-size:33px;line-height:35px;min-width:0}
 .detail-heading>p{margin:0;line-height:18px;min-height:18px}
 .detail-heading>.is-reserved{visibility:hidden;pointer-events:none}
-.detail-header>.weather-widget{grid-area:weather;justify-self:end;align-self:center;width:200px;min-height:52px;margin:0;padding:7px 0 7px 16px;gap:10px;border-left:1px solid var(--border-soft)}
+.detail-header>.weather-widget{grid-area:weather;justify-self:end;align-self:center;width:200px;min-height:52px;margin:0;padding:7px 0 7px 16px;gap:10px;border-left:1px solid var(--border-soft);opacity:var(--weather-opacity)}
 .weather-widget>span:first-child{width:30px;min-width:30px;flex:none;line-height:1}
 .weather-widget>span:last-child{min-width:0;flex:1;display:block}
 .weather-widget strong,.weather-widget small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
@@ -1755,7 +1756,7 @@ window.BUS_NOTICES=[];
     cancelDetailAnimations();detailMotion.phase='entering';
     const grid=$('.detail-grid');if(grid)grid.inert=detailMotion.gridWasInert;
     $('.workbench').setAttribute('aria-busy','true');
-    const animations=detailElements().map(({element,group})=>{const opacity=getComputedStyle(element).opacity;return element.animate([
+    const animations=detailElements().map(({element,group})=>{const opacity=element.id==='weatherButton'?(getComputedStyle(element).getPropertyValue('--weather-opacity').trim()||'.94'):1;return element.animate([
       {opacity:0,transform:'translate3d(0,14px,0)'},
       {opacity,transform:'translate3d(0,0,0)'}
     ],{duration:440,delay:group*20,easing:'cubic-bezier(.22,1,.36,1)',fill:'both'});});
