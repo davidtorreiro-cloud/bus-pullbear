@@ -1686,6 +1686,8 @@ window.BUS_NOTICES=[];
   const state={shift:'early',direction:'out',routeId:1,stopId:'pontevedra',query:'',mode:'routes',servicesOpen:false,weather:null,noticeIndex:0};
   const suggestions={open:false,local:[],active:-1};
   let mapTimer,lastMapKey='',lastDetailKey='',lastFocused=null;
+  const detailMotion={epoch:0,phase:'idle',animations:[],gridWasInert:false};
+  const detailMotionPreference=window.matchMedia('(prefers-reduced-motion:reduce)');
   const noticeMotion=window.matchMedia('(prefers-reduced-motion:reduce)');
   let noticePaused=noticeMotion.matches,noticeHovered=false,noticeFocused=false,noticeTimer=null;
   const currentShift=()=>D.shifts.find(s=>s.id===state.shift);
@@ -1693,10 +1695,10 @@ window.BUS_NOTICES=[];
   const directionName=d=>d==='out'?'Ida':'Vuelta';
   const routeOrigin=r=>D.stops[r.stops[0].id].name,destination=r=>D.stops[r.stops.at(-1).id].name;
   const formatTime=t=>new Intl.DateTimeFormat('es-ES',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Madrid'}).format(new Date(t));
-  function mobileDetail(){if(window.matchMedia('(max-width:760px)').matches){const workspace=$('.workspace'),revealing=!workspace.classList.contains('mobile-detail');workspace.classList.add('mobile-detail');if(revealing)animateDetail(true);window.scrollTo({top:0,behavior:'instant'});$('#mobileBack').focus({preventScroll:true});}}
+  function mobileDetail(){if(window.matchMedia('(max-width:760px)').matches){const workspace=$('.workspace'),revealing=!workspace.classList.contains('mobile-detail');workspace.classList.add('mobile-detail');if(revealing)animateDetail();window.scrollTo({top:0,behavior:'instant'});$('#mobileBack').focus({preventScroll:true});}}
   function closeSuggestions(){suggestions.open=false;suggestions.active=-1;$('#searchSuggestions').hidden=true;$('#searchInput').setAttribute('aria-expanded','false');$('#searchInput').removeAttribute('aria-activedescendant');}
   function setMode(mode){closeSuggestions();state.mode=mode;state.query='';$('#searchInput').value='';state.servicesOpen=mode!=='routes';if(mode==='routes'&&!currentRoute().stops.some(s=>s.id===state.stopId))state.stopId=currentRoute().stops[0].id;$('.workspace').classList.remove('mobile-detail');render();}
-  function setRoute(shift,direction,id,stopId){closeSuggestions();state.shift=shift;state.direction=direction;state.routeId=Number(id);state.mode='routes';state.servicesOpen=false;const route=currentRoute();if(state.query&&!C.routeMatches(D,route,state.query)){state.query='';$('#searchInput').value='';}state.stopId=stopId||route.stops[0].id;lastDetailKey='';render();mobileDetail();}
+  function setRoute(shift,direction,id,stopId){closeSuggestions();state.shift=shift;state.direction=direction;state.routeId=Number(id);state.mode='routes';state.servicesOpen=false;const route=currentRoute();if(state.query&&!C.routeMatches(D,route,state.query)){state.query='';$('#searchInput').value='';}state.stopId=stopId||route.stops[0].id;render(true);mobileDetail();}
   function chooseStop(id,fromPlanner=false){closeSuggestions();state.stopId=id;state.servicesOpen=true;renderDetail();if(state.mode!=='routes')renderResults();renderMap();if(fromPlanner)mobileDetail();}
   function renderControls(){const nonRoutes=state.mode!=='routes';$('.planner').classList.toggle('is-stop-mode',nonRoutes);$('.planner-intro h1').textContent=nonRoutes?'Busca tu parada':'Elige tu bus';$('#navRoutes').classList.toggle('active',!nonRoutes);$('#navStops').classList.toggle('active',nonRoutes);$('#shiftSelect').value=state.shift;$('#shiftDays').textContent=currentShift().shortDays;$$('[data-direction]').forEach(b=>{const on=b.dataset.direction===state.direction;b.classList.toggle('is-active',on);b.setAttribute('aria-pressed',on);});$('#clearSearch').hidden=!state.query;$('#listTitle').textContent=nonRoutes?'PARADAS DEL SERVICIO':'BUSES DISPONIBLES';}
   function renderResults(){if(state.mode!=='routes')return renderStopResults();const routes=D.routes[state.shift][state.direction].filter(r=>C.routeMatches(D,r,state.query));$('#resultCount').textContent=routes.length;
@@ -1706,23 +1708,52 @@ window.BUS_NOTICES=[];
   function renderStopResults(){const stops=Object.values(D.stops).filter(s=>C.services(D,s.id).length&&C.stopMatches(D,s.id,state.query)).sort((a,b)=>a.name.localeCompare(b.name,'es'));$('#resultCount').textContent=stops.length;$('#resultList').innerHTML=stops.length?stops.map(s=>{const services=C.services(D,s.id),buses=[...new Set(services.map(x=>x.route.id))].sort((a,b)=>a-b);return `<button class="stop-result ${state.stopId===s.id?'selected':''}" data-pick-stop="${s.id}" aria-pressed="${state.stopId===s.id}"><span aria-hidden="true">${ICON_LOCATION}</span><div><strong>${esc(s.name)}</strong><small>${services.length} horarios · Ida y vuelta</small><div class="bus-chips">${buses.map(b=>`<span>BUS ${b}</span>`).join('')}</div></div><span aria-hidden="true">${ICON_RIGHT}</span></button>`;}).join(''):'<div class="empty-state"><strong>No hay paradas con ese nombre.</strong></div>';$$('[data-pick-stop]').forEach(b=>b.onclick=()=>chooseStop(b.dataset.pickStop,true));}
   function serviceMarkup(stopId){const services=C.services(D,stopId);return `<div class="service-groups">${['out','back'].map(direction=>{const list=services.filter(s=>s.direction===direction);return `<section><div class="service-group-label">${directionName(direction)}</div>${list.length?list.map(s=>`<button class="service-row" data-service="${s.key}"><span class="service-bus">Bus ${s.route.id}</span><div><strong>${s.stop.time}</strong><small>Turno ${s.shift.start}–${s.shift.end} · ${s.shift.shortDays}</small></div></button>`).join(''):'<p class="service-empty">Sin paso por esta parada en este sentido.</p>'}</section>`;}).join('')}</div>`;}
   function wireServices(){ $$('[data-service]').forEach(b=>b.onclick=()=>{const [shift,direction,id]=b.dataset.service.split(':');setRoute(shift,direction,id,state.stopId);});}
-  function animateDetail(force=false){
-    const workbench=$('.workbench');if(!workbench?.getClientRects().length)return;
-    const key=[state.mode,state.shift,state.direction,state.routeId,state.mode==='stops'?state.stopId:''].join(':');
-    const animations=animateDetail.animations||(animateDetail.animations=new Map());
-    if(window.matchMedia('(prefers-reduced-motion:reduce)').matches){animations.forEach(animation=>animation.cancel());animations.clear();lastDetailKey=key;return;}
-    if(!force&&key===lastDetailKey)return;lastDetailKey=key;
-    const groups=[['#routeBadge','.detail-heading'],['#journeyBar'],['.detail-grid']],starts=new Map();
-    groups.flat().forEach(selector=>{const element=$(selector);if(element&&!element.hidden&&element.getClientRects().length){const style=getComputedStyle(element);starts.set(element,{opacity:style.opacity,transform:style.transform});}});
-    animations.forEach(animation=>animation.cancel());animations.clear();
-    groups.forEach((selectors,index)=>selectors.forEach(selector=>{
-      const element=$(selector);if(!element||element.hidden||!element.getClientRects().length||!element.animate)return;
-      const animation=element.animate([{...(starts.get(element)||{opacity:1,transform:'none'}),offset:0,easing:'cubic-bezier(.4,0,.4,1)'},{opacity:.8,transform:'translate3d(0,6px,0)',offset:.22,easing:'cubic-bezier(.2,0,.2,1)'},{opacity:1,transform:'translate3d(0,0,0)',offset:1}],{duration:600,delay:index*20,fill:'backwards',easing:'linear'});
-      animations.set(element,animation);const release=()=>{if(animations.get(element)===animation)animations.delete(element);};animation.onfinish=release;animation.oncancel=release;
-    }));
+  function detailKey(){return [state.mode,state.shift,state.direction,state.routeId,state.mode==='stops'?state.stopId:''].join(':');}
+  function detailIsVisible(){return Boolean($('.workbench')?.getClientRects().length);}
+  function detailElements(){return [['#routeBadge','.detail-heading'],['#journeyBar'],['.detail-grid']].flatMap((selectors,group)=>selectors.map(selector=>({element:$(selector),group}))).filter(({element})=>element&&!element.hidden&&element.getClientRects().length&&element.animate);}
+  function cancelDetailAnimations(){detailMotion.animations.forEach(animation=>animation.cancel());detailMotion.animations=[];}
+  function unlockDetail(){const grid=$('.detail-grid');if(grid)grid.inert=detailMotion.gridWasInert;$('.workbench')?.removeAttribute('aria-busy');}
+  function cancelDetailTransition(){detailMotion.epoch++;cancelDetailAnimations();detailMotion.phase='idle';unlockDetail();}
+  function finishDetailTransition(epoch){if(epoch!==detailMotion.epoch)return;cancelDetailAnimations();detailMotion.phase='idle';unlockDetail();}
+  function enterDetail(epoch){
+    if(epoch!==detailMotion.epoch)return;
+    if(detailMotionPreference.matches||!detailIsVisible()){finishDetailTransition(epoch);return;}
+    cancelDetailAnimations();detailMotion.phase='entering';
+    const grid=$('.detail-grid');if(grid)grid.inert=detailMotion.gridWasInert;
+    $('.workbench').setAttribute('aria-busy','true');
+    const animations=detailElements().map(({element,group})=>element.animate([
+      {opacity:0,transform:'translate3d(0,14px,0)'},
+      {opacity:1,transform:'translate3d(0,0,0)'}
+    ],{duration:440,delay:group*20,easing:'cubic-bezier(.22,1,.36,1)',fill:'both'}));
+    detailMotion.animations=animations;
+    Promise.all(animations.map(animation=>animation.finished.catch(()=>null))).then(()=>finishDetailTransition(epoch));
   }
-  function renderDetail(){const r=currentRoute(),shift=currentShift(),stop=D.stops[state.stopId],overview=state.mode!=='routes';$('#routeBadge').innerHTML=overview?ICON_LOCATION:String(r.id).padStart(2,'0');$('#journeyDirection').textContent=overview?'Todos los turnos · Ida y vuelta':`${directionName(state.direction)} · ${state.direction==='out'?'A Coruña → Narón':'Narón → A Coruña'}`;$('#routeTitle').textContent=overview?stop.name:`Bus ${r.id}`;$('#routeSubtitle').textContent=`${shift.shortDays} · Turno ${shift.start}–${shift.end}`;$('#routeSubtitle').hidden=overview;$('#journeyBar').hidden=overview;$('#departureTime').textContent=r.stops[0].time;$('#arrivalTime').textContent=r.stops.at(-1).time;$('#departurePlace').textContent=routeOrigin(r);$('#arrivalPlace').textContent=destination(r);$('#journeyDuration').textContent=C.duration(r)+' min';$('#journeyStopCount').textContent=r.stops.length+' paradas';renderJourneyDuration(r);$('#mapStopTitle').textContent=stop.name;$('#stopsTitle').textContent=overview?'Buses de esta parada':'Todas las paradas';$('#stopsCount').textContent=overview?C.services(D,state.stopId).length:r.stops.length;
-    $('#stopTimeline').hidden=overview;$('#stopServices').hidden=!overview;if(overview){$('#stopServices').innerHTML=serviceMarkup(state.stopId);wireServices();}else renderTimeline();animateDetail();
+  function animateDetail(){cancelDetailTransition();enterDetail(detailMotion.epoch);}
+  function transitionDetail(){
+    if(detailMotionPreference.matches||!detailIsVisible()||!detailElements().length){renderDetail();return;}
+    // Further selections update state and the sidebar while this one exit completes.
+    if(detailMotion.phase==='exiting')return;
+    const starts=detailElements().map(({element})=>{const style=getComputedStyle(element);return {element,opacity:style.opacity,transform:style.transform};});
+    cancelDetailTransition();const epoch=detailMotion.epoch;
+    detailMotion.phase='exiting';$('.workbench').setAttribute('aria-busy','true');
+    const grid=$('.detail-grid');detailMotion.gridWasInert=!!grid?.inert;if(grid)grid.inert=true;
+    const animations=starts.map(({element,opacity,transform})=>element.animate([
+      {opacity,transform},
+      {opacity:0,transform:(transform==='none'?'':transform+' ')+'translate3d(0,12px,0)'}
+    ],{duration:220,easing:'cubic-bezier(.4,0,.6,1)',fill:'both'}));
+    detailMotion.animations=animations;
+    Promise.all(animations.map(animation=>animation.finished.catch(()=>null))).then(()=>{
+      if(epoch!==detailMotion.epoch)return;
+      // Replace the old information only once it is fully transparent.
+      paintDetail();enterDetail(epoch);
+    });
+  }
+  function renderDetail(){
+    if(detailMotion.phase==='entering'&&detailKey()===lastDetailKey){paintDetail();return;}
+    cancelDetailTransition();paintDetail();
+  }
+  function paintDetail(){const r=currentRoute(),shift=currentShift(),stop=D.stops[state.stopId],overview=state.mode!=='routes';$('#routeBadge').innerHTML=overview?ICON_LOCATION:String(r.id).padStart(2,'0');$('#journeyDirection').textContent=overview?'Todos los turnos · Ida y vuelta':`${directionName(state.direction)} · ${state.direction==='out'?'A Coruña → Narón':'Narón → A Coruña'}`;$('#routeTitle').textContent=overview?stop.name:`Bus ${r.id}`;$('#routeSubtitle').textContent=`${shift.shortDays} · Turno ${shift.start}–${shift.end}`;$('#routeSubtitle').hidden=overview;$('#journeyBar').hidden=overview;$('#departureTime').textContent=r.stops[0].time;$('#arrivalTime').textContent=r.stops.at(-1).time;$('#departurePlace').textContent=routeOrigin(r);$('#arrivalPlace').textContent=destination(r);$('#journeyDuration').textContent=C.duration(r)+' min';$('#journeyStopCount').textContent=r.stops.length+' paradas';renderJourneyDuration(r);$('#mapStopTitle').textContent=stop.name;$('#stopsTitle').textContent=overview?'Buses de esta parada':'Todas las paradas';$('#stopsCount').textContent=overview?C.services(D,state.stopId).length:r.stops.length;
+    $('#stopTimeline').hidden=overview;$('#stopServices').hidden=!overview;if(overview){$('#stopServices').innerHTML=serviceMarkup(state.stopId);wireServices();}else renderTimeline();lastDetailKey=detailKey();
   }
   function transitionStopPanel(panel,open,stopId){
     const from=panel.hidden?0:panel.getBoundingClientRect().height;
@@ -1767,16 +1798,17 @@ window.BUS_NOTICES=[];
   function syncNoticeRotation(enabled){if(!enabled&&noticeTimer!==null){clearInterval(noticeTimer);noticeTimer=null;}else if(enabled&&noticeTimer===null)noticeTimer=setInterval(()=>{if(!noticePaused&&!noticeHovered&&!noticeFocused&&!document.hidden)nextNotice();},7000);}
   function renderNotice(){const notices=activeNotices(),strip=$('#noticeStrip'),element=$('#noticeText'),visible=!!(notices.length&&strip&&element),controls=strip?.querySelector('.notice-controls');document.documentElement.classList.toggle('has-service-notice',visible);document.documentElement.style.setProperty('--notice-height',visible?'34px':'0px');if(strip)strip.hidden=!visible;if(controls)controls.hidden=!visible||notices.length<2;syncNoticeRotation(visible&&notices.length>1);if(!visible){state.noticeIndex=0;noticeHovered=false;noticeFocused=false;if(element){element.textContent='';element.removeAttribute('title');}return;}state.noticeIndex=((Math.trunc(state.noticeIndex)||0)%notices.length+notices.length)%notices.length;const notice=notices[state.noticeIndex],text=String(notice.text||notice.title),changed=element.textContent!==text;element.textContent=text;if(changed&&element.animate&&!noticeMotion.matches){element.getAnimations().forEach(animation=>animation.cancel());element.animate([{opacity:.35,transform:'translateY(2px)'},{opacity:1,transform:'translateY(0)'}],{duration:320,easing:'cubic-bezier(.16,1,.3,1)'});}element.title=text;const position=$('#noticePosition'),pause=$('#pauseNotice');if(position){position.textContent=`${state.noticeIndex+1} / ${notices.length}`;position.setAttribute('aria-label',`Aviso ${state.noticeIndex+1} de ${notices.length}`);}if(pause){pause.textContent=noticePaused?'▶':'Ⅱ';pause.setAttribute('aria-pressed',noticePaused);pause.setAttribute('aria-label',noticePaused?'Reanudar avisos':'Pausar avisos');}}
   function nextNotice(delta=1){const notices=activeNotices();if(!notices.length){renderNotice();return;}const step=Number.isFinite(Number(delta))?Math.trunc(Number(delta)):1;state.noticeIndex=((state.noticeIndex+step)%notices.length+notices.length)%notices.length;renderNotice();}
-  function render(){renderControls();renderResults();renderDetail();renderMap();}
-  $$('[data-direction]').forEach(b=>b.onclick=()=>{closeSuggestions();state.direction=b.dataset.direction;state.routeId=D.routes[state.shift][state.direction][0].id;state.stopId=currentRoute().stops[0].id;state.servicesOpen=false;render();});$('#shiftSelect').onchange=e=>{closeSuggestions();state.shift=e.target.value;state.routeId=D.routes[state.shift][state.direction][0].id;state.stopId=currentRoute().stops[0].id;state.servicesOpen=false;render();};
-  $('#searchInput').oninput=e=>{state.query=e.target.value;renderControls();renderResults();scheduleSuggestions();};$('#searchInput').onfocus=()=>{if(state.query.trim().length>=2)scheduleSuggestions();};$('#clearSearch').onclick=()=>{state.query='';$('#searchInput').value='';closeSuggestions();render();$('#searchInput').focus();};
+  function render(transition=false){renderControls();renderResults();if(transition)transitionDetail();else renderDetail();renderMap();}
+  $$('[data-direction]').forEach(b=>b.onclick=()=>{closeSuggestions();state.direction=b.dataset.direction;state.routeId=D.routes[state.shift][state.direction][0].id;state.stopId=currentRoute().stops[0].id;state.servicesOpen=false;render(true);});$('#shiftSelect').onchange=e=>{closeSuggestions();state.shift=e.target.value;state.routeId=D.routes[state.shift][state.direction][0].id;state.stopId=currentRoute().stops[0].id;state.servicesOpen=false;render(true);};
+  $('#searchInput').oninput=e=>{state.query=e.target.value;renderControls();renderResults();scheduleSuggestions();};$('#searchInput').onfocus=()=>{if(state.query.trim().length>=2)scheduleSuggestions();};$('#clearSearch').onclick=()=>{state.query='';$('#searchInput').value='';closeSuggestions();renderControls();renderResults();$('#searchInput').focus();};
   $('#searchInput').onkeydown=e=>{if(e.key==='Escape'){closeSuggestions();return;}if(!suggestions.open)return;const options=$$('.suggestion');if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();suggestions.active=options.length?(suggestions.active<0?(e.key==='ArrowDown'?0:options.length-1):(suggestions.active+(e.key==='ArrowDown'?1:-1)+options.length)%options.length):-1;applyActiveSuggestion();}else if(e.key==='Enter'&&suggestions.active>=0){e.preventDefault();options[suggestions.active]?.click();}};document.addEventListener('pointerdown',e=>{if(!e.target.closest('.search-wrap'))closeSuggestions();});
   $('.brand').onclick=e=>{e.preventDefault();setMode('routes');};$('#navRoutes').onclick=()=>setMode('routes');$('#navStops').onclick=()=>{setMode('stops');$('#searchInput').focus();};$('#openAllStops').onclick=()=>setMode('stops');$('#helpButton').onclick=showHelp;$('#weatherButton').onclick=showWeather;
-  $('#openMap').onclick=openMap;$('#closeMap').onclick=()=>dismissDialog($('#mapDialog'));$('#mapOverview').onclick=()=>renderMap(true);$('#googleMap').onload=()=>{if($('#googleMap').src!=='about:blank'){clearTimeout(mapTimer);$('#mapLoading').hidden=true;}};$('#mobileBack').onclick=()=>{$('.workspace').classList.remove('mobile-detail');$('#searchInput').focus();};
+  $('#openMap').onclick=openMap;$('#closeMap').onclick=()=>dismissDialog($('#mapDialog'));$('#mapOverview').onclick=()=>renderMap(true);$('#googleMap').onload=()=>{if($('#googleMap').src!=='about:blank'){clearTimeout(mapTimer);$('#mapLoading').hidden=true;}};$('#mobileBack').onclick=()=>{cancelDetailTransition();paintDetail();$('.workspace').classList.remove('mobile-detail');$('#searchInput').focus();};
   $('#reportButton').onclick=showReport;$('#closeDialog').onclick=()=>dismissDialog($('#appDialog'));['appDialog','mapDialog'].forEach(id=>{const dialog=$('#'+id);dialog.addEventListener('close',()=>lastFocused?.focus({preventScroll:true}));dialog.onclick=e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dismissDialog(dialog);}};});
   const noticeText=$('#noticeText'),previousNotice=$('#previousNotice'),nextNoticeButton=$('#nextNotice'),pauseNotice=$('#pauseNotice'),noticeStrip=$('#noticeStrip');
   if(noticeText)noticeText.onclick=showNotice;if(previousNotice)previousNotice.onclick=()=>nextNotice(-1);if(nextNoticeButton)nextNoticeButton.onclick=()=>nextNotice();if(pauseNotice)pauseNotice.onclick=()=>{noticePaused=!noticePaused;renderNotice();};if(noticeStrip){noticeStrip.onmouseenter=()=>noticeHovered=true;noticeStrip.onmouseleave=()=>noticeHovered=false;noticeStrip.onfocusin=()=>noticeFocused=true;noticeStrip.onfocusout=e=>{noticeFocused=noticeStrip.contains(e.relatedTarget);};}noticeMotion.addEventListener?.('change',event=>{if(event.matches)noticePaused=true;renderNotice();});
   setInterval(()=>{if(!document.hidden)loadWeather();},15*60*1000);
+  detailMotionPreference.addEventListener?.('change',event=>{if(event.matches){cancelDetailTransition();paintDetail();}});
   render();renderNotice();loadWeather();window.BusPlanner={state,render,chooseStop,setRoute,setMode,reportMailto,nextNotice,refreshNotices:renderNotice,openMap};
 })();
 
