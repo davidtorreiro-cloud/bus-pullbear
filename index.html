@@ -602,6 +602,126 @@ dialog.is-closing::backdrop{animation:bus-backdrop-exit var(--motion-dialog-clos
 }
 @media(prefers-reduced-motion:reduce){.ui-icon{transition:none}}
 
+</style><style data-source="assets/features.css">
+/* Stop selection stays part of the planner, with the same flat surfaces. */
+.stop-empty{
+  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+  min-height:294px;padding:32px;border:1px solid var(--border);border-radius:2px;
+  background:var(--panel);color:var(--fg);
+}
+.stop-empty-icon{
+  display:grid;place-items:center;width:40px;height:40px;margin-bottom:20px;
+  border:1px solid var(--border-soft);border-radius:2px;background:var(--elevated);color:var(--muted);
+}
+.stop-empty-icon svg{display:block;width:22px;height:22px}
+.stop-empty>.micro{margin:0 0 8px}
+.stop-empty h3{
+  margin:0 0 12px;font-family:var(--font-heading);font-size:24px;font-weight:600;
+  font-stretch:118%;line-height:1.2;letter-spacing:-.025em;color:var(--fg);
+}
+.stop-empty p{
+  max-width:56ch;margin:0 0 22px;font-family:var(--font-reading);font-size:14px;
+  font-weight:400;line-height:1.7;letter-spacing:0;color:var(--muted);
+}
+.stop-empty>.secondary-button{display:inline-flex;align-items:center;gap:8px}
+
+/* One scrolling dialog body keeps the title and close control in place. */
+#appDialog.weather-dialog{width:min(780px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:hidden}
+#appDialog.weather-dialog[open]{display:flex;flex-direction:column}
+#appDialog.weather-dialog>.dialog-top{flex:none}
+#appDialog.weather-dialog #dialogBody{
+  min-height:0;padding:22px 24px 24px;overflow:auto;overscroll-behavior:contain;
+  scrollbar-width:thin;scrollbar-color:var(--border) transparent;scroll-padding-top:48px;
+}
+.weather-forecast{min-width:0;color:var(--fg)}
+.forecast-summary{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:24px;
+  margin-bottom:16px;padding-bottom:18px;border-bottom:1px solid var(--border-soft);
+}
+.forecast-location{min-width:0}
+.forecast-location h3{
+  margin:0 0 5px;font-family:var(--font-heading);font-size:20px;font-weight:600;
+  font-stretch:118%;line-height:1.25;letter-spacing:-.02em;color:var(--fg);
+}
+#appDialog.weather-dialog .forecast-location p{margin:0;font-size:13px;line-height:1.6;color:var(--muted)}
+.forecast-current{display:grid;gap:4px;flex:none;text-align:right}
+.forecast-current strong{
+  font-family:var(--font-numbers);font-size:32px;font-weight:400;line-height:1.2;
+  letter-spacing:-.04em;font-variant-numeric:tabular-nums;color:var(--fg);
+}
+.forecast-current>span{max-width:220px;font-size:13px;line-height:1.5;color:var(--muted)}
+#appDialog.weather-dialog .forecast-note{margin:0 0 18px;font-size:13px;line-height:1.65;color:var(--muted)}
+.forecast-table-wrap{border:1px solid var(--border);border-radius:2px}
+.forecast-table{
+  width:100%;table-layout:fixed;border-collapse:separate;border-spacing:0;
+  font-family:var(--font-reading);font-size:14px;line-height:1.45;color:var(--fg);
+}
+.forecast-table thead th{
+  position:sticky;top:0;z-index:2;padding:12px 14px;text-align:left;
+  border-bottom:1px solid var(--border);background:var(--panel);color:var(--muted);
+  font-family:var(--font-reading);font-size:12px;font-weight:500;line-height:1.4;letter-spacing:0;
+}
+.forecast-table td,.forecast-table tbody th{padding:14px;vertical-align:middle;border-bottom:1px solid var(--border-soft);text-align:left}
+.forecast-table tbody th{font-weight:400;background:transparent}
+.forecast-table th:first-child{width:100px}
+.forecast-table th:nth-child(3){width:108px}
+.forecast-table th:nth-child(4){width:150px}
+.forecast-table tbody tr:last-child td,.forecast-table tbody tr:last-child th{border-bottom:0}
+.forecast-hour-label{
+  display:block;font-family:var(--font-numbers);font-size:14px;font-weight:500;
+  letter-spacing:-.02em;line-height:1.4;font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+.forecast-hour-now{display:block;margin-top:3px;font-size:12px;font-weight:500;line-height:1.4;color:var(--accent)}
+.forecast-condition{display:flex;align-items:center;gap:10px;min-width:0;font-size:14px;line-height:1.45}
+.forecast-condition .forecast-symbol,.forecast-symbol{display:block;width:24px;height:24px;flex:none;color:var(--fg)}
+.forecast-temperature{
+  font-family:var(--font-numbers);font-size:16px;font-weight:500;line-height:1.4;
+  font-variant-numeric:tabular-nums;letter-spacing:-.025em;white-space:nowrap;color:var(--fg);
+}
+.forecast-wind{display:flex;align-items:center;gap:8px;font-size:14px;line-height:1.45;font-variant-numeric:tabular-nums;color:var(--fg)}
+.forecast-wind small{font-size:12px;font-weight:400;line-height:1.45;color:var(--muted)}
+.forecast-table tr.is-current-hour td,.forecast-table tr.is-current-hour th{background:var(--accent-tint)}
+.forecast-table tr.is-past .forecast-hour-label,.forecast-table tr.is-past .forecast-condition,
+.forecast-table tr.is-past .forecast-temperature,.forecast-table tr.is-past .forecast-wind{color:var(--muted)}
+.forecast-loading,.forecast-error{
+  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:14px;
+  min-height:160px;padding:28px 24px;border:1px solid var(--border);border-radius:2px;
+  background:var(--elevated);font-size:14px;line-height:1.65;color:var(--muted);
+}
+.forecast-error strong{font-weight:500;color:var(--fg)}
+.forecast-error button,.forecast-error .retryForecastbutton{align-self:flex-start}
+#appDialog.weather-dialog .forecast-credit{
+  margin:18px 0 0;padding-top:14px;border-top:1px solid var(--border-soft);
+  font-size:12px;line-height:1.6;color:var(--muted);
+}
+.forecast-credit a{color:var(--fg);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+
+@media(max-width:600px){
+  .stop-empty{min-height:274px;padding:24px}
+  .stop-empty-icon{width:36px;height:36px;margin-bottom:18px}
+  #appDialog.weather-dialog{width:calc(100vw - 16px);max-height:calc(100dvh - 16px)}
+  #appDialog.weather-dialog>.dialog-top{padding:16px}
+  #appDialog.weather-dialog #dialogBody{padding:18px 10px 20px}
+  .forecast-summary{gap:14px;margin-bottom:14px;padding-bottom:16px}
+  .forecast-location h3{font-size:18px}
+  .forecast-current strong{font-size:28px}
+  .forecast-current>span{max-width:145px;font-size:12px}
+  .forecast-table{table-layout:auto}
+  .forecast-table th,.forecast-table td{padding:12px 6px}
+  .forecast-table th:first-child{width:54px}
+  .forecast-table th:nth-child(2){width:50px}
+  .forecast-table th:nth-child(3){width:88px}
+  .forecast-table th:nth-child(4){width:auto}
+  .forecast-condition{justify-content:center;gap:0}
+  .forecast-condition-label{
+    position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+    clip:rect(0,0,0,0);white-space:nowrap;border:0;
+  }
+  .forecast-temperature{font-size:15px}
+  .forecast-wind{flex-wrap:wrap;column-gap:6px;row-gap:2px;font-size:13px}
+  .forecast-loading,.forecast-error{min-height:150px;padding:24px 18px}
+}
+
 </style>
   
 </head>
@@ -619,7 +739,7 @@ dialog.is-closing::backdrop{animation:bus-backdrop-exit var(--motion-dialog-clos
     <section class="workbench" aria-label="Bus y paradas">
       <header class="detail-header"><button id="mobileBack" class="icon-button mobile-back" aria-label="Volver a los buses"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m6-6-6 6 6 6"/></svg></button><div class="route-badge" id="routeBadge">01</div><div class="detail-heading"><div class="micro" id="journeyDirection">Ida · A Coruña → Narón</div><h2 id="routeTitle">Bus 1</h2><p id="routeSubtitle">L–V · Turno 08:30–17:45</p></div><button id="weatherButton" class="weather-widget" aria-label="Tiempo actual de A Coruña"><span id="weatherIcon" aria-hidden="true">☁</span><span><strong id="weatherTemp">A Coruña</strong><small id="weatherCondition">Consultando el tiempo…</small></span></button></header>
       <div class="journey-bar" id="journeyBar"><div class="journey-schedule"><div class="journey-endpoint"><span class="micro">Salida</span><strong id="departureTime">07:40</strong><span id="departurePlace">Plaza Pontevedra</span></div><div class="journey-connector"><span id="journeyDuration" title="Duración prevista del servicio">50 min</span><i></i><small id="journeyStopCount">3 paradas</small></div><div class="journey-endpoint"><span class="micro">Llegada</span><strong id="arrivalTime">08:30</strong><span id="arrivalPlace">Sede Pull&Bear</span></div></div><div class="journey-duration" id="journeyDurationInfo"><span class="micro">Duración del viaje</span><strong id="plannedDuration">50 min</strong></div></div>
-      <div class="detail-grid"><section class="stops-panel" aria-labelledby="stopsTitle"><div class="stops-panel-header"><div class="stops-title-line"><h3 id="stopsTitle">Todas las paradas</h3><span id="stopsCount">3</span></div><button id="openMap" class="secondary-button"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><circle cx="12" cy="12" r="6" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Ver mapa</button></div><div id="stopTimeline" class="stop-timeline"></div><div id="stopServices" class="stop-services" hidden></div><button id="reportButton" class="report-button"><span>¿Hay un dato incorrecto?</span><span class="report-link">Reportar</span></button></section></div>
+      <div class="detail-grid"><section class="stops-panel" aria-labelledby="stopsTitle"><div class="stops-panel-header" id="stopsPanelHeader"><div class="stops-title-line"><h3 id="stopsTitle">Todas las paradas</h3><span id="stopsCount">3</span></div><button id="openMap" class="secondary-button"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none"><circle cx="12" cy="12" r="6" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg> Ver mapa</button></div><div id="stopEmpty" class="stop-empty" hidden><div class="stop-empty-icon" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 11-8 11S4 16 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/></svg></div><h3 id="stopEmptyTitle">Selecciona una parada</h3><p>Busca una parada por su nombre o elígela en la lista para ver sus buses y horarios de ida y vuelta.</p><button class="secondary-button" id="focusStopSearch"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 4.5 4.5"/></svg>Buscar una parada</button></div><div id="stopTimeline" class="stop-timeline"></div><div id="stopServices" class="stop-services" hidden></div><button id="reportButton" class="report-button"><span>¿Hay un dato incorrecto?</span><span class="report-link">Reportar</span></button></section></div>
     </section>
   </main>
   <dialog id="mapDialog" class="app-dialog map-dialog" aria-labelledby="mapDialogTitle"><div class="dialog-top"><div><h2 id="mapDialogTitle">Mapa de paradas</h2></div><button id="closeMap" class="icon-button" aria-label="Cerrar mapa"><svg class="ui-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div><section class="map-panel"><div class="map-toolbar"><span class="micro" id="mapStopTitle">Plaza Pontevedra</span><button class="text-button" id="mapOverview">Ver todas las paradas ↗</button></div><div class="google-map-wrap"><iframe id="googleMap" title="Google Maps: paradas de Bus Pull&Bear" src="about:blank" referrerpolicy="strict-origin-when-cross-origin"></iframe><div class="map-loading" id="mapLoading">Cargando Google Maps…</div></div></section></dialog>
@@ -1521,12 +1641,15 @@ window.BUS_DATA = {
 <script data-source="assets/live.js">
 (function(root){
   'use strict';
-  const WEATHER_URL='https://api.open-meteo.com/v1/forecast?latitude=43.3623&longitude=-8.4115&current=temperature_2m%2Cweather_code%2Cis_day&hourly=precipitation_probability&forecast_hours=6&timezone=Europe%2FMadrid';
+  // Open-Meteo forecast API: https://open-meteo.com/en/docs
+  // Unix seconds identify instants across DST; dates are resolved in Europe/Madrid.
+  const WEATHER_URL='https://api.open-meteo.com/v1/forecast?latitude=43.3623&longitude=-8.4115&current=temperature_2m%2Cweather_code%2Cis_day%2Cwind_speed_10m%2Cwind_direction_10m&hourly=temperature_2m%2Cweather_code%2Cis_day%2Cwind_speed_10m%2Cwind_direction_10m%2Cprecipitation_probability&forecast_days=1&timezone=Europe%2FMadrid&timeformat=unixtime&temperature_unit=celsius&wind_speed_unit=kmh';
   const WEATHER_TTL=15*60*1000,MAX_WEATHER_AGE=2*60*60*1000;
-  const WEATHER_SEED={temperature:11.7,label:'Parcialmente nuboso',icon:'⛅',time:'2026-10-28T09:30:00+01:00',rainChance:0,source:'Open-Meteo',cached:true};
-  let weatherCache=null,weatherFetchedAt=0;
+  const dateFormatter=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'});
+  let weatherCache=null,weatherFetchedAt=0,weatherInFlight=null,weatherRequestVersion=0;
 
   function weatherLabel(code){
+    if(code===null||code===undefined||code==='')return 'Tiempo no disponible';
     code=Number(code);
     if(code===0)return 'Despejado';
     if(code===1)return 'Poco nuboso';
@@ -1545,7 +1668,9 @@ window.BUS_DATA = {
     return 'Tiempo variable';
   }
   function weatherIcon(code,isDay=true){
+    if(code===null||code===undefined||code==='')return '—';
     code=Number(code);
+    if(!Number.isFinite(code))return '—';
     if(code===0)return isDay?'☀':'☾';
     if(code===1||code===2)return isDay?'⛅':'☁';
     if(code===3)return '☁';
@@ -1558,14 +1683,14 @@ window.BUS_DATA = {
   function aborted(signal){
     if(signal?.aborted)throw signal.reason||new DOMException('Consulta cancelada','AbortError');
   }
-  async function getJSON(url,signal){
+  async function getJSON(url,signal,force=false){
     aborted(signal);
     const controller=new AbortController();
     const onAbort=()=>controller.abort(signal.reason);
     if(signal)signal.addEventListener('abort',onAbort,{once:true});
     const timer=setTimeout(()=>controller.abort(new DOMException('La consulta ha tardado demasiado','TimeoutError')),7000);
     try{
-      const response=await fetch(url,{signal:controller.signal,mode:'cors',credentials:'omit',headers:{Accept:'application/json'}});
+      const response=await fetch(url,{signal:controller.signal,mode:'cors',credentials:'omit',cache:force?'no-store':'default',headers:{Accept:'application/json'}});
       if(!response.ok)throw new Error('El servicio no está disponible ('+response.status+').');
       return await response.json();
     }finally{
@@ -1573,26 +1698,44 @@ window.BUS_DATA = {
       if(signal)signal.removeEventListener('abort',onAbort);
     }
   }
-  function isoTime(localTime,utcOffset){
-    if(!localTime)return '';
-    if(/[zZ]$|[+-]\d\d:\d\d$/.test(localTime))return localTime;
-    const offset=Number(utcOffset)||0,absolute=Math.abs(offset);
-    return localTime+(localTime.length===16?':00':'')+(offset>=0?'+':'-')+String(Math.floor(absolute/3600)).padStart(2,'0')+':'+String(Math.floor(absolute%3600/60)).padStart(2,'0');
+  function isoTime(value,utcOffset){
+    let milliseconds;
+    if(typeof value==='number'&&Number.isFinite(value))milliseconds=value*1000;
+    else if(typeof value==='string'&&value){
+      let text=value;
+      if(!/[zZ]$|[+-]\d\d:\d\d$/.test(text)){
+        if(typeof utcOffset!=='number'||!Number.isFinite(utcOffset))return null;
+        const absolute=Math.abs(utcOffset);
+        text+=(text.length===16?':00':'')+(utcOffset>=0?'+':'-')+String(Math.floor(absolute/3600)).padStart(2,'0')+':'+String(Math.floor(absolute%3600/60)).padStart(2,'0');
+      }
+      milliseconds=Date.parse(text);
+    }
+    const date=new Date(milliseconds);
+    return Number.isFinite(date.getTime())?date.toISOString():null;
   }
+  function madridDate(value){const parts=dateFormatter.formatToParts(new Date(value)),part=type=>parts.find(item=>item.type===type)?.value;return part('year')+'-'+part('month')+'-'+part('day');}
+  function finiteNumber(value){return typeof value==='number'&&Number.isFinite(value)?value:null;}
+  function rangedNumber(value,min,max){const number=finiteNumber(value);return number!==null&&number>=min&&number<=max?number:null;}
+  function weatherCode(value){const code=rangedNumber(value,0,99);return code!==null&&Number.isInteger(code)?code:null;}
+  function dayValue(value){return value===true||value===1?true:value===false||value===0?false:null;}
+  function conditionIcon(code,isDay){return code===null||(isDay===null&&code<=2)?null:weatherIcon(code,isDay);}
+  function normalizeHour(value){
+    const timeISO=isoTime(value?.timeISO);if(!timeISO)return null;
+    const code=weatherCode(value.weatherCode),isDay=dayValue(value.isDay);
+    return {timeISO,temperature:finiteNumber(value.temperature),weatherCode:code,isDay,icon:conditionIcon(code,isDay),label:code===null?null:weatherLabel(code),windSpeed:rangedNumber(value.windSpeed,0,Infinity),windDirection:rangedNumber(value.windDirection,0,360),rainChance:rangedNumber(value.rainChance,0,100)};
+  }
+  function hasHourlyData(hour){return [hour.temperature,hour.weatherCode,hour.windSpeed,hour.windDirection,hour.rainChance].some(value=>finiteNumber(value)!==null);}
   function normalizeWeather(data){
     const current=data?.current,temperature=current?.temperature_2m;
-    if(!current||typeof temperature!=='number'||!Number.isFinite(temperature)||!current.time)throw new Error('El servicio no ha devuelto el tiempo actual.');
+    if(!current||finiteNumber(temperature)===null)throw new Error('El servicio no ha devuelto el tiempo actual.');
     const time=isoTime(current.time,data.utc_offset_seconds);
-    if(!Number.isFinite(Date.parse(time)))throw new Error('La hora de la previsión no es válida.');
-    let rainChance=null;
-    const hours=data.hourly?.time,probabilities=data.hourly?.precipitation_probability;
-    if(Array.isArray(hours)&&Array.isArray(probabilities)){
-      let index=hours.findIndex(hour=>hour>=current.time);
-      if(index<0)index=hours.length-1;
-      const value=probabilities[index];
-      if(typeof value==='number'&&Number.isFinite(value))rainChance=Math.max(0,Math.min(100,value));
-    }
-    return {temperature,label:weatherLabel(current.weather_code),icon:weatherIcon(current.weather_code,current.is_day!==0),time,rainChance,source:'Open-Meteo',cached:false};
+    if(!time)throw new Error('La hora de la previsión no es válida.');
+    const today=madridDate(Date.now()),hourly=data.hourly||{},times=Array.isArray(hourly.time)?hourly.time:[];
+    const allHours=times.map((hour,index)=>normalizeHour({timeISO:isoTime(hour,data.utc_offset_seconds),temperature:hourly.temperature_2m?.[index],weatherCode:hourly.weather_code?.[index],isDay:hourly.is_day?.[index],windSpeed:hourly.wind_speed_10m?.[index],windDirection:hourly.wind_direction_10m?.[index],rainChance:hourly.precipitation_probability?.[index]})).filter(Boolean);
+    const hours=allHours.filter(hour=>madridDate(hour.timeISO)===today&&hasHourlyData(hour)).sort((a,b)=>Date.parse(a.timeISO)-Date.parse(b.timeISO));
+    const forecastDate=hours.length?today:madridDate(allHours[0]?.timeISO||time),nextHour=hours.find(hour=>Date.parse(hour.timeISO)>=Date.parse(time));
+    const code=weatherCode(current.weather_code),isDay=dayValue(current.is_day);
+    return {temperature,label:weatherLabel(code),icon:conditionIcon(code,isDay)||'—',time,rainChance:nextHour?.rainChance??null,weatherCode:code,isDay,windSpeed:rangedNumber(current.wind_speed_10m,0,Infinity),windDirection:rangedNumber(current.wind_direction_10m,0,360),hours,forecastDate,units:{temperature:'°C',windSpeed:'km/h'},source:'Open-Meteo',cached:false,stale:forecastDate!==today};
   }
   function usableWeather(value){
     if(!value||!Number.isFinite(value.temperature))return false;
@@ -1600,24 +1743,45 @@ window.BUS_DATA = {
     return Number.isFinite(age)&&age>=-15*60*1000&&age<=MAX_WEATHER_AGE;
   }
   function storedWeather(){
-    try{const value=JSON.parse(root.localStorage?.getItem('pb-weather-v1')||'null');return usableWeather(value)?value:null;}catch{return null;}
+    const values=[];
+    for(const key of ['pb-weather-v2','pb-weather-v1'])try{const value=JSON.parse(root.localStorage?.getItem(key)||'null');if(usableWeather(value))values.push(value);}catch{}
+    return values.sort((a,b)=>Date.parse(b.time)-Date.parse(a.time))[0]||null;
   }
-  async function getWeather({signal}={}){
-    aborted(signal);
-    if(weatherCache&&Date.now()-weatherFetchedAt<WEATHER_TTL&&usableWeather(weatherCache))return {...weatherCache,cached:true};
+  function todayForecast(value){return value?.forecastDate===madridDate(Date.now())&&Array.isArray(value.hours)&&value.hours.some(hour=>hour?.timeISO&&Number.isFinite(Date.parse(hour.timeISO))&&madridDate(hour.timeISO)===value.forecastDate&&hasHourlyData(hour));}
+  function weatherSnapshot(value,cached,stale=false){
+    const today=madridDate(Date.now()),time=isoTime(value.time),forecastDate=/^\d{4}-\d{2}-\d{2}$/.test(value.forecastDate||'')?value.forecastDate:madridDate(time);
+    const hours=Array.isArray(value.hours)?value.hours.map(normalizeHour).filter(hour=>hour&&madridDate(hour.timeISO)===today&&hasHourlyData(hour)):[];
+    return {...value,time,weatherCode:weatherCode(value.weatherCode),isDay:dayValue(value.isDay),windSpeed:rangedNumber(value.windSpeed,0,Infinity),windDirection:rangedNumber(value.windDirection,0,360),rainChance:rangedNumber(value.rainChance,0,100),hours,forecastDate,units:{temperature:'°C',windSpeed:'km/h'},cached,stale:stale||forecastDate!==today};
+  }
+  async function requestWeather(signal,force){
+    const version=++weatherRequestVersion;
     try{
-      const value=normalizeWeather(await getJSON(WEATHER_URL,signal));
+      const value=normalizeWeather(await getJSON(WEATHER_URL,signal,force));
       aborted(signal);
       if(!usableWeather(value))throw new Error('El servicio ha devuelto una previsión antigua.');
-      weatherCache=value;weatherFetchedAt=Date.now();
-      try{root.localStorage?.setItem('pb-weather-v1',JSON.stringify(value));}catch{}
-      return {...value};
+      if(version===weatherRequestVersion){
+        weatherCache=value;weatherFetchedAt=Date.now();
+        try{root.localStorage?.setItem('pb-weather-v2',JSON.stringify(value));}catch{}
+      }
+      return weatherSnapshot(value,false);
     }catch(error){
       aborted(signal);
-      const fallback=[weatherCache,storedWeather(),WEATHER_SEED].find(usableWeather);
-      if(fallback)return {...fallback,cached:true};
+      const fallback=[weatherCache,storedWeather()].filter(usableWeather).sort((a,b)=>Date.parse(b.time)-Date.parse(a.time))[0];
+      if(fallback)return weatherSnapshot(fallback,true,true);
       throw error;
     }
+  }
+  async function getWeather({signal,force=false}={}){
+    aborted(signal);
+    if(!force&&weatherCache&&Date.now()-weatherFetchedAt<WEATHER_TTL&&usableWeather(weatherCache)&&todayForecast(weatherCache))return weatherSnapshot(weatherCache,true);
+    // Independently cancellable callers and explicit retries own their request.
+    if(force||signal)return requestWeather(signal,force);
+    if(!weatherInFlight){
+      const request=requestWeather(undefined,false);weatherInFlight=request;
+      const release=()=>{if(weatherInFlight===request)weatherInFlight=null;};request.then(release,release);
+    }
+    const value=await weatherInFlight;
+    return weatherSnapshot(value,value.cached,value.stale);
   }
   root.BusLive={getWeather,weatherLabel,weatherIcon};
 })(typeof window!=='undefined'?window:globalThis);
@@ -1732,9 +1896,9 @@ window.BUS_NOTICES=[];
   const formatTime=t=>new Intl.DateTimeFormat('es-ES',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Madrid'}).format(new Date(t));
   function mobileDetail(){if(window.matchMedia('(max-width:760px)').matches){const workspace=$('.workspace'),revealing=!workspace.classList.contains('mobile-detail');workspace.classList.add('mobile-detail');if(revealing)animateDetail();window.scrollTo({top:0,behavior:'instant'});$('#mobileBack').focus({preventScroll:true});}}
   function closeSuggestions(){suggestions.open=false;suggestions.active=-1;$('#searchSuggestions').hidden=true;$('#searchInput').setAttribute('aria-expanded','false');$('#searchInput').removeAttribute('aria-activedescendant');}
-  function setMode(mode){closeSuggestions();state.mode=mode;state.query='';$('#searchInput').value='';state.servicesOpen=mode!=='routes';if(mode==='routes'&&!currentRoute().stops.some(s=>s.id===state.stopId))state.stopId=currentRoute().stops[0].id;$('.workspace').classList.remove('mobile-detail');render(true);}
+  function setMode(mode){closeSuggestions();state.mode=mode;state.query='';$('#searchInput').value='';state.servicesOpen=false;if(mode==='stops')state.stopId=null;if(mode==='routes'&&!currentRoute().stops.some(s=>s.id===state.stopId))state.stopId=currentRoute().stops[0].id;$('.workspace').classList.remove('mobile-detail');render(true);}
   function setRoute(shift,direction,id,stopId){closeSuggestions();state.shift=shift;state.direction=direction;state.routeId=Number(id);state.mode='routes';state.servicesOpen=false;const route=currentRoute();if(state.query&&!C.routeMatches(D,route,state.query)){state.query='';$('#searchInput').value='';}state.stopId=stopId||route.stops[0].id;render(true);mobileDetail();}
-  function chooseStop(id,fromPlanner=false){closeSuggestions();state.stopId=id;state.servicesOpen=true;if(state.mode==='routes')renderDetail();else transitionDetail();if(state.mode!=='routes')renderResults();renderMap();if(fromPlanner)mobileDetail();}
+  function chooseStop(id,fromPlanner=false){if(!D.stops[id])return;closeSuggestions();state.stopId=id;state.servicesOpen=true;if(state.mode==='routes')renderDetail();else transitionDetail();if(state.mode!=='routes')renderResults();renderMap();if(fromPlanner)mobileDetail();}
   function renderControls(){const nonRoutes=state.mode!=='routes';$('.planner').classList.toggle('is-stop-mode',nonRoutes);$('.planner-intro h1').textContent=nonRoutes?'Busca tu parada':'Elige tu bus';$('#navRoutes').classList.toggle('active',!nonRoutes);$('#navStops').classList.toggle('active',nonRoutes);$('#shiftSelect').value=state.shift;$('#shiftDays').textContent=currentShift().shortDays;$$('[data-direction]').forEach(b=>{const on=b.dataset.direction===state.direction;b.classList.toggle('is-active',on);b.setAttribute('aria-pressed',on);});$('#clearSearch').hidden=!state.query;$('#listTitle').textContent=nonRoutes?'PARADAS DEL SERVICIO':'BUSES DISPONIBLES';}
   function renderResults(){if(state.mode!=='routes')return renderStopResults();const routes=D.routes[state.shift][state.direction].filter(r=>C.routeMatches(D,r,state.query));$('#resultCount').textContent=routes.length;
     if(!routes.length){const others=C.allRoutes(D).filter(s=>s.direction===state.direction&&s.shift.id!==state.shift&&C.routeMatches(D,s.route,state.query));$('#resultList').innerHTML=`<div class="empty-state"><strong>No hay coincidencias en este turno.</strong>Busca por el nombre de una parada o selecciona otro horario.${others.map(s=>`<button class="other-route" data-other-shift="${s.shift.id}" data-other-bus="${s.route.id}">Bus ${s.route.id} · Turno ${s.shift.start}–${s.shift.end} →</button>`).join('')}</div>`;$$('[data-other-shift]').forEach(b=>b.onclick=()=>setRoute(b.dataset.otherShift,state.direction,b.dataset.otherBus));return;}
@@ -1789,8 +1953,19 @@ window.BUS_NOTICES=[];
     if(detailMotion.phase==='entering'&&detailKey()===lastDetailKey){paintDetail();return;}
     cancelDetailTransition();paintDetail();
   }
-  function paintDetail(){const workbench=$('.workbench');if(lastDetailKey&&lastDetailKey.split(':')[0]!==state.mode)workbench.scrollTop=0;const r=currentRoute(),shift=currentShift(),stop=D.stops[state.stopId],overview=state.mode!=='routes';$('#routeBadge').innerHTML=overview?ICON_LOCATION:String(r.id).padStart(2,'0');$('#journeyDirection').textContent=overview?'Todos los turnos · Ida y vuelta':`${directionName(state.direction)} · ${state.direction==='out'?'A Coruña → Narón':'Narón → A Coruña'}`;$('#routeTitle').textContent=overview?stop.name:`Bus ${r.id}`;$('#routeSubtitle').textContent=`${shift.shortDays} · Turno ${shift.start}–${shift.end}`;$('#routeSubtitle').hidden=false;$('#routeSubtitle').classList.toggle('is-reserved',overview);$('#routeSubtitle').setAttribute('aria-hidden',String(overview));$('#journeyBar').hidden=overview;$('#departureTime').textContent=r.stops[0].time;$('#arrivalTime').textContent=r.stops.at(-1).time;$('#departurePlace').textContent=routeOrigin(r);$('#arrivalPlace').textContent=destination(r);$('#journeyDuration').textContent=C.duration(r)+' min';$('#journeyStopCount').textContent=r.stops.length+' paradas';renderJourneyDuration(r);$('#mapStopTitle').textContent=stop.name;$('#stopsTitle').textContent=overview?'Buses de esta parada':'Todas las paradas';$('#stopsCount').textContent=overview?C.services(D,state.stopId).length:r.stops.length;
-    $('#stopTimeline').hidden=overview;$('#stopServices').hidden=!overview;if(overview){$('#stopServices').innerHTML=serviceMarkup(state.stopId);wireServices();}else renderTimeline();lastDetailKey=detailKey();
+  function paintDetail(){
+    const workbench=$('.workbench');if(lastDetailKey&&lastDetailKey.split(':')[0]!==state.mode)workbench.scrollTop=0;
+    const r=currentRoute(),shift=currentShift(),stop=D.stops[state.stopId],overview=state.mode!=='routes',empty=overview&&!stop;
+    $('#routeBadge').innerHTML=overview?ICON_LOCATION:String(r.id).padStart(2,'0');
+    $('#journeyDirection').textContent=overview?'Todos los turnos · Ida y vuelta':`${directionName(state.direction)} · ${state.direction==='out'?'A Coruña → Narón':'Narón → A Coruña'}`;
+    $('#routeTitle').textContent=overview?(stop?.name||'Todas las paradas'):`Bus ${r.id}`;
+    $('#routeSubtitle').textContent=`${shift.shortDays} · Turno ${shift.start}–${shift.end}`;$('#routeSubtitle').hidden=false;$('#routeSubtitle').classList.toggle('is-reserved',overview);$('#routeSubtitle').setAttribute('aria-hidden',String(overview));
+    $('#journeyBar').hidden=overview;$('#departureTime').textContent=r.stops[0].time;$('#arrivalTime').textContent=r.stops.at(-1).time;$('#departurePlace').textContent=routeOrigin(r);$('#arrivalPlace').textContent=destination(r);$('#journeyDuration').textContent=C.duration(r)+' min';$('#journeyStopCount').textContent=r.stops.length+' paradas';renderJourneyDuration(r);
+    $('#mapStopTitle').textContent=stop?.name||'Todas las paradas';$('#stopsTitle').textContent=overview?'Buses de esta parada':'Todas las paradas';$('#stopsCount').textContent=empty?'':overview?C.services(D,state.stopId).length:r.stops.length;
+    $('#stopsPanelHeader').hidden=empty;$('#stopEmpty').hidden=!empty;$('#reportButton').hidden=empty;$('.stops-panel').setAttribute('aria-labelledby',empty?'stopEmptyTitle':'stopsTitle');
+    $('#stopTimeline').hidden=overview;$('#stopServices').hidden=!overview||empty;
+    if(overview&&!empty){$('#stopServices').innerHTML=serviceMarkup(state.stopId);wireServices();}else if(!overview)renderTimeline();
+    if(empty)$('#stopServices').innerHTML='';lastDetailKey=detailKey();
   }
   function transitionStopPanel(panel,open,stopId){
     const from=panel.hidden?0:panel.getBoundingClientRect().height;
@@ -1817,19 +1992,65 @@ window.BUS_NOTICES=[];
   }
 
   function renderJourneyDuration(route){$('#plannedDuration').textContent=C.duration(route)+' min';}
-  function mapPoint(){const s=D.stops[state.stopId];return s.points[state.direction]||s.points.out||s.points.back;}
+  function mapPoint(){const s=D.stops[state.stopId];return s?(s.points[state.direction]||s.points.out||s.points.back):null;}
   function renderMap(overview=false,force=false){if(!$('#mapDialog').open)return;const p=overview?[43.425,-8.29]:mapPoint();if(!p)return;const z=overview?10:16,key=p.join(',')+':'+z;if(key===lastMapKey&&!force)return;lastMapKey=key;$('#mapLoading').hidden=false;clearTimeout(mapTimer);$('#googleMap').src=`https://www.google.com/maps/d/embed?mid=${D.mapId}&noprof=1&ll=${p[0]}%2C${p[1]}&z=${z}`;mapTimer=setTimeout(()=>$('#mapLoading').hidden=true,7000);}
-  function openMap(){lastFocused=document.activeElement;$('#mapDialog').showModal();$('#closeMap').focus();renderMap(false,true);}
+  function openMap(){lastFocused=document.activeElement;$('#mapDialog').showModal();$('#closeMap').focus();renderMap(!D.stops[state.stopId],true);}
   function renderSuggestions(){if(!suggestions.open||state.query.trim().length<2){closeSuggestions();return;}$('#searchSuggestions').innerHTML=suggestions.local.length?'<div class="suggestion-group">PARADAS DEL SERVICIO</div>'+suggestions.local.map((s,index)=>`<button id="search-option-${index}" class="suggestion" role="option" aria-selected="false" tabindex="-1" data-suggest-stop="${s.id}"><strong>${esc(s.name)}</strong><small>${[...new Set(C.services(D,s.id).map(s=>s.route.id))].map(id=>'Bus '+id).join(' · ')}</small></button>`).join(''):'<div class="suggestion-status" role="status">No hay paradas con ese nombre.</div>';$('#searchSuggestions').hidden=false;$('#searchInput').setAttribute('aria-expanded','true');$$('[data-suggest-stop]').forEach(b=>b.onclick=()=>{state.mode='stops';state.servicesOpen=true;state.query='';$('#searchInput').value='';closeSuggestions();state.stopId=b.dataset.suggestStop;render();mobileDetail();});applyActiveSuggestion();}
   function applyActiveSuggestion(){const options=$$('.suggestion');if(suggestions.active>=options.length)suggestions.active=options.length-1;options.forEach((b,i)=>{const active=i===suggestions.active;b.classList.toggle('is-active',active);b.setAttribute('aria-selected',active);});const active=options[suggestions.active];if(active)$('#searchInput').setAttribute('aria-activedescendant',active.id);else $('#searchInput').removeAttribute('aria-activedescendant');}
   function scheduleSuggestions(){const q=state.query.trim();suggestions.local=Object.values(D.stops).filter(s=>C.services(D,s.id).length&&C.stopMatches(D,s.id,q)).sort((a,b)=>a.name.localeCompare(b.name,'es')).slice(0,6);suggestions.active=-1;suggestions.open=q.length>=2;renderSuggestions();}
   function dismissDialog(dialog){if(window.BusMotion)return window.BusMotion.closeDialog(dialog);dialog.close();return Promise.resolve();}
-  function openDialog(title,html){lastFocused=document.activeElement;$('#dialogTitle').textContent=title;$('#dialogBody').innerHTML=html;$('#appDialog').showModal();$('#closeDialog').focus();}
+  function openDialog(title,html,kind=''){lastFocused=document.activeElement;$('#appDialog').classList.toggle('weather-dialog',kind==='weather');$('#dialogTitle').textContent=title;$('#dialogBody').innerHTML=html;$('#dialogBody').scrollTop=0;$('#appDialog').showModal();$('#closeDialog').focus();}
   function showNotice(){const notices=activeNotices();if(!notices.length)return;const notice=notices[state.noticeIndex%notices.length],stop=D.stops[notice.stopId],details=notice.details||notice.text||notice.title;openDialog(notice.title||'Aviso del servicio',`<div class="dialog-notice"><p>${esc(details).replace(/\n/g,'<br>')}</p></div>${stop?`<button class="primary-button" id="noticeShowStop">Ver buses de ${esc(stop.name)}</button>`:''}`);const button=$('#noticeShowStop');if(button)button.onclick=async()=>{await dismissDialog($('#appDialog'));closeSuggestions();state.mode='stops';state.stopId=notice.stopId;state.query='';state.servicesOpen=true;$('#searchInput').value='';render();mobileDetail();};}
-  async function loadWeather(){try{state.weather=await L.getWeather();$('#weatherIcon').textContent=state.weather.icon;$('#weatherTemp').textContent=`A Coruña · ${Math.round(state.weather.temperature)} °C`;$('#weatherCondition').textContent=`${state.weather.label} · ${formatTime(state.weather.time)}`;$('#weatherButton').setAttribute('aria-label',`Tiempo de A Coruña: ${Math.round(state.weather.temperature)} grados, ${state.weather.label}, dato de las ${formatTime(state.weather.time)}`);}catch{$('#weatherTemp').textContent='A Coruña';$('#weatherCondition').textContent='Tiempo no disponible';$('#weatherButton').setAttribute('aria-label','Consultar de nuevo el tiempo de A Coruña');}}
-  function showWeather(){const w=state.weather;if(!w){loadWeather();openDialog('Tiempo de A Coruña','<p>No se ha podido consultar el tiempo. Comprueba la conexión y vuelve a intentarlo.</p><p class="weather-credit">Datos: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></p>');return;}openDialog('Tiempo de A Coruña',`<div class="weather-reading">${esc(w.icon)} ${Math.round(w.temperature)} °C</div><p><strong>${esc(w.label)}</strong><br>Dato del ${new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'long',hour:'2-digit',minute:'2-digit',timeZone:'Europe/Madrid'}).format(new Date(w.time))}.</p>${w.rainChance!==null?`<p>Lluvia en la próxima hora: <strong>${w.rainChance}%</strong>.</p>`:''}<p class="weather-credit">Datos: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> · CC BY 4.0</p>`);}
+  function updateWeatherWidget(weather){
+    if(state.weather&&Date.parse(state.weather.time)>Date.parse(weather.time))return;
+    state.weather=weather;$('#weatherIcon').textContent=weather.icon;$('#weatherTemp').textContent=`A Coruña · ${Math.round(weather.temperature)} °C`;$('#weatherCondition').textContent=`${weather.label} · ${formatTime(weather.time)}`;
+    $('#weatherButton').setAttribute('aria-label',`Tiempo de A Coruña: ${Math.round(weather.temperature)} grados, ${weather.label}. Ver el pronóstico de hoy por horas`);
+  }
+  async function loadWeather(){try{const weather=await L.getWeather();updateWeatherWidget(weather);return weather;}catch{$('#weatherTemp').textContent='A Coruña';$('#weatherCondition').textContent='Tiempo no disponible';$('#weatherButton').setAttribute('aria-label','Consultar el pronóstico de hoy en A Coruña');return null;}}
+  const forecastDateFormatter=new Intl.DateTimeFormat('en-GB',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'});
+  let forecastRequest=0,forecastShownHour=-1;
+  function localForecastDate(value=Date.now()){const parts=forecastDateFormatter.formatToParts(new Date(value)),part=type=>parts.find(item=>item.type===type)?.value;return `${part('year')}-${part('month')}-${part('day')}`;}
+  function forecastHours(weather){const today=localForecastDate();return Array.isArray(weather?.hours)?weather.hours.filter(hour=>hour?.timeISO&&Number.isFinite(Date.parse(hour.timeISO))&&localForecastDate(hour.timeISO)===today):[];}
+  function hasForecast(weather){const age=Date.now()-Date.parse(weather?.time);return Number.isFinite(age)&&age>=-15*60*1000&&age<=2*60*60*1000&&forecastHours(weather).length>0;}
+  function weatherSymbol(code,isDay){
+    const sun='<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/>',moon='<path d="M20.5 14A8.5 8.5 0 0 1 10 3.5 8.5 8.5 0 1 0 20.5 14Z"/>',cloud='<path d="M6 17h12a4 4 0 0 0 .2-8A6 6 0 0 0 7 8a4.5 4.5 0 0 0-1 9Z"/>',rainCloud='<path d="M6 14h12a3.5 3.5 0 0 0 .2-7 5.5 5.5 0 0 0-10.4-.6A4 4 0 0 0 6 14Z"/>';
+    let drawing;
+    if(!Number.isFinite(code))drawing='<circle cx="12" cy="12" r="8"/><path d="M8 12h8"/>';
+    else if(code===0)drawing=isDay===false?moon:sun;
+    else if(code===1||code===2)drawing=(isDay===false?'<path d="M16 4a5 5 0 0 1-6 6"/>':'<circle cx="8" cy="7" r="3"/><path d="M8 1v1M2 7H1m2-4L2 2m11 1 1-1"/>')+'<path d="M7 19h11a4 4 0 0 0 0-8 5 5 0 0 0-9-1 4.5 4.5 0 0 0-2 9Z"/>';
+    else if(code===45||code===48)drawing=rainCloud+'<path d="M4 18h16M7 21h10"/>';
+    else if(code>=95)drawing=rainCloud+'<path d="m12 16-3 4h4l-1 3 6-6h-4l1-1"/>';
+    else if((code>=71&&code<=77)||code===85||code===86)drawing=rainCloud+'<path d="M8 17v5m-2-4 4 3m-4 0 4-3m7-1v5m-2-4 4 3m-4 0 4-3"/>';
+    else if(code>=51&&code<=82)drawing=rainCloud+'<path d="m8 17-1 4m6-4-1 4m6-4-1 4"/>';
+    else drawing=cloud;
+    return `<svg class="ui-icon forecast-symbol" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">${drawing}</svg>`;
+  }
+  function forecastError(){return '<div class="forecast-error" role="status"><strong>No se ha podido cargar el pronóstico por horas.</strong><span>Comprueba la conexión y vuelve a intentarlo.</span><button class="secondary-button retryForecastbutton" id="retryForecast">Reintentar</button></div><p class="forecast-credit">Datos de <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>.</p>';}
+  function renderForecastError(){const body=$('#dialogBody');body.innerHTML=forecastError();body.scrollTop=0;$('#retryForecast').onclick=()=>refreshForecast(true);}
+  function renderForecast(weather,preserveScroll=false){
+    const hours=forecastHours(weather);if(!hours.length){renderForecastError();return;}
+    const body=$('#dialogBody'),savedScroll=body.scrollTop,now=Date.now(),date=new Intl.DateTimeFormat('es-ES',{weekday:'long',day:'numeric',month:'long',timeZone:'Europe/Madrid'}).format(new Date());
+    const compass=['N','NE','E','SE','S','SO','O','NO'];
+    const rows=hours.map(hour=>{
+      const time=Date.parse(hour.timeISO),current=now>=time&&now<time+60*60*1000,past=time+60*60*1000<=now,label=hour.label||'Sin datos',temperature=Number.isFinite(hour.temperature)?`${Math.round(hour.temperature)} °C`:'—',wind=Number.isFinite(hour.windSpeed)?`${Math.round(hour.windSpeed)} km/h`:'—',direction=Number.isFinite(hour.windDirection)?compass[Math.round(hour.windDirection/45)%8]:'';
+      return `<tr class="${current?'is-current-hour':past?'is-past':''}"><th scope="row"><span class="forecast-hour-label">${formatTime(hour.timeISO)}</span>${current?'<span class="forecast-hour-now">Ahora</span>':''}</th><td><span class="forecast-condition">${weatherSymbol(hour.weatherCode,hour.isDay)}<span class="forecast-condition-label">${esc(label)}</span></span></td><td><span class="forecast-temperature">${temperature}</span></td><td><span class="forecast-wind"><span>${wind}</span>${direction&&Number.isFinite(hour.windSpeed)?`<small title="Dirección del viento">${direction}</small>`:''}</span></td></tr>`;
+    }).join('');
+    body.innerHTML=`<section class="weather-forecast"><div class="forecast-summary"><div class="forecast-location"><h3>Hoy por horas</h3><p>${esc(date)}</p></div><div class="forecast-current"><strong>${Math.round(weather.temperature)} °C</strong><span>${esc(weather.label)}</span></div></div>${weather.stale?`<p class="forecast-note" role="status">Datos guardados de las ${formatTime(weather.time)}. No se han podido actualizar.</p>`:''}<div class="forecast-table-wrap"><table class="forecast-table" aria-label="Pronóstico de hoy por horas en A Coruña"><thead><tr><th scope="col">Hora</th><th scope="col">Tiempo</th><th scope="col">Temperatura</th><th scope="col">Viento</th></tr></thead><tbody>${rows}</tbody></table></div><p class="forecast-credit">Hora local de A Coruña · Datos de <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></p></section>`;
+    if(preserveScroll)body.scrollTop=savedScroll;
+    else{const row=body.querySelector('.is-current-hour');if(row){const head=body.querySelector('thead');body.scrollTop=Math.max(0,row.getBoundingClientRect().top-body.getBoundingClientRect().top+body.scrollTop-(head?.getBoundingClientRect().height||42)-10);}else body.scrollTop=0;}
+  }
+  async function refreshForecast(force=false,preserveScroll=false){
+    forecastShownHour=Math.floor(Date.now()/(60*60*1000));
+    const id=++forecastRequest,dialog=$('#appDialog'),initial=state.weather,prefilled=!force&&hasForecast(initial);
+    if(prefilled)renderForecast(initial,preserveScroll);
+    else{$('#dialogBody').innerHTML='<div class="forecast-loading" role="status">Cargando el pronóstico de hoy…</div>';$('#dialogBody').scrollTop=0;}
+    const stillOpen=()=>id===forecastRequest&&dialog.open&&dialog.classList.contains('weather-dialog');
+    try{const weather=await L.getWeather({force});if(!stillOpen())return;updateWeatherWidget(weather);if(hasForecast(weather))renderForecast(weather,prefilled||preserveScroll);else renderForecastError();}
+    catch{if(!stillOpen())return;if(prefilled)renderForecast({...initial,stale:true},true);else renderForecastError();}
+  }
+  function showWeather(){openDialog('Hoy en A Coruña','<div class="forecast-loading" role="status">Cargando el pronóstico de hoy…</div>','weather');refreshForecast();}
   function showHelp(){openDialog('Ayuda','<p><strong>Horarios</strong><br>Elige sentido, turno y bus.</p><p><strong>Paradas</strong><br>Busca por nombre o pulsa una parada para consultar sus buses.</p><p><strong>Mapa</strong><br>Pulsa un marcador para ver buses y horarios.</p>');}
-  function reportMailto(text){const r=currentRoute(),shift=currentShift(),isRoute=state.mode==='routes';const subject=isRoute?`Corrección Bus Pull&Bear · Bus ${r.id} · ${directionName(state.direction)}`:`Corrección Bus Pull&Bear · ${D.stops[state.stopId].name}`;const context=isRoute?`Bus ${r.id} · ${directionName(state.direction)}\nTurno ${shift.start}–${shift.end} (${shift.days})`:'Consulta de todos los buses y turnos';const body=`Bus Pull&Bear\n${context}\nParada: ${D.stops[state.stopId].name}\n\nDetalle de la corrección:\n${text}`;return `mailto:davidtcou@pullbear.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;}
+  function reportMailto(text){const r=currentRoute(),shift=currentShift(),isRoute=state.mode==='routes';const subject=isRoute?`Corrección Bus Pull&Bear · Bus ${r.id} · ${directionName(state.direction)}`:`Corrección Bus Pull&Bear · ${D.stops[state.stopId]?.name||'Sin parada seleccionada'}`;const context=isRoute?`Bus ${r.id} · ${directionName(state.direction)}\nTurno ${shift.start}–${shift.end} (${shift.days})`:'Consulta de todos los buses y turnos';const body=`Bus Pull&Bear\n${context}\nParada: ${D.stops[state.stopId]?.name||'Sin parada seleccionada'}\n\nDetalle de la corrección:\n${text}`;return `mailto:davidtcou@pullbear.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;}
   function showReport(){openDialog('Corregir un dato',`<label class="dialog-field"><span>¿Qué hay que corregir?</span><textarea id="reportText" placeholder="Indica el dato y la corrección…" required></textarea></label><a class="primary-button report-mail" id="sendReportMail" href="${reportMailto('')}">Abrir correo ${ICON_EXTERNAL}</a><p class="dialog-source" style="margin-top:14px">Para davidtcou@pullbear.com. Se abrirá tu aplicación de correo.</p>`);$('#reportText').oninput=e=>{e.target.setCustomValidity('');$('#sendReportMail').href=reportMailto(e.target.value.trim());};$('#sendReportMail').onclick=e=>{const field=$('#reportText');if(!field.value.trim()){e.preventDefault();field.setCustomValidity('Describe el dato que hay que corregir.');field.reportValidity();}};$('#reportText').focus();}
   function activeNotices(){return Array.isArray(window.BUS_NOTICES)?window.BUS_NOTICES.filter(notice=>notice&&typeof notice==='object'&&notice.active!==false&&(notice.text||notice.title)):[];}
   function syncNoticeRotation(enabled){if(!enabled&&noticeTimer!==null){clearInterval(noticeTimer);noticeTimer=null;}else if(enabled&&noticeTimer===null)noticeTimer=setInterval(()=>{if(!noticePaused&&!noticeHovered&&!noticeFocused&&!document.hidden)nextNotice();},7000);}
@@ -1839,12 +2060,13 @@ window.BUS_NOTICES=[];
   $$('[data-direction]').forEach(b=>b.onclick=()=>{closeSuggestions();state.direction=b.dataset.direction;state.routeId=D.routes[state.shift][state.direction][0].id;state.stopId=currentRoute().stops[0].id;state.servicesOpen=false;render(true);});$('#shiftSelect').onchange=e=>{closeSuggestions();state.shift=e.target.value;state.routeId=D.routes[state.shift][state.direction][0].id;state.stopId=currentRoute().stops[0].id;state.servicesOpen=false;render(true);};
   $('#searchInput').oninput=e=>{state.query=e.target.value;renderControls();renderResults();scheduleSuggestions();};$('#searchInput').onfocus=()=>{if(state.query.trim().length>=2)scheduleSuggestions();};$('#clearSearch').onclick=()=>{state.query='';$('#searchInput').value='';closeSuggestions();renderControls();renderResults();$('#searchInput').focus();};
   $('#searchInput').onkeydown=e=>{if(e.key==='Escape'){closeSuggestions();return;}if(!suggestions.open)return;const options=$$('.suggestion');if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();suggestions.active=options.length?(suggestions.active<0?(e.key==='ArrowDown'?0:options.length-1):(suggestions.active+(e.key==='ArrowDown'?1:-1)+options.length)%options.length):-1;applyActiveSuggestion();}else if(e.key==='Enter'&&suggestions.active>=0){e.preventDefault();options[suggestions.active]?.click();}};document.addEventListener('pointerdown',e=>{if(!e.target.closest('.search-wrap'))closeSuggestions();});
-  $('.brand').onclick=e=>{e.preventDefault();setMode('routes');};$('#navRoutes').onclick=()=>setMode('routes');$('#navStops').onclick=()=>{setMode('stops');$('#searchInput').focus();};$('#openAllStops').onclick=()=>setMode('stops');$('#helpButton').onclick=showHelp;$('#weatherButton').onclick=showWeather;
+  $('.brand').onclick=e=>{e.preventDefault();setMode('routes');};$('#navRoutes').onclick=()=>setMode('routes');$('#navStops').onclick=()=>{setMode('stops');$('#searchInput').focus();};$('#openAllStops').onclick=()=>setMode('stops');$('#focusStopSearch').onclick=()=>$('#searchInput').focus({preventScroll:true});$('#helpButton').onclick=showHelp;$('#weatherButton').onclick=showWeather;
   $('#openMap').onclick=openMap;$('#closeMap').onclick=()=>dismissDialog($('#mapDialog'));$('#mapOverview').onclick=()=>renderMap(true);$('#googleMap').onload=()=>{if($('#googleMap').src!=='about:blank'){clearTimeout(mapTimer);$('#mapLoading').hidden=true;}};$('#mobileBack').onclick=()=>{cancelDetailTransition();paintDetail();$('.workspace').classList.remove('mobile-detail');$('#searchInput').focus();};
   $('#reportButton').onclick=showReport;$('#closeDialog').onclick=()=>dismissDialog($('#appDialog'));['appDialog','mapDialog'].forEach(id=>{const dialog=$('#'+id);dialog.addEventListener('close',()=>lastFocused?.focus({preventScroll:true}));dialog.onclick=e=>{if(e.target===dialog){const r=dialog.getBoundingClientRect();if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom)dismissDialog(dialog);}};});
   const noticeText=$('#noticeText'),previousNotice=$('#previousNotice'),nextNoticeButton=$('#nextNotice'),pauseNotice=$('#pauseNotice'),noticeStrip=$('#noticeStrip');
   if(noticeText)noticeText.onclick=showNotice;if(previousNotice)previousNotice.onclick=()=>nextNotice(-1);if(nextNoticeButton)nextNoticeButton.onclick=()=>nextNotice();if(pauseNotice)pauseNotice.onclick=()=>{noticePaused=!noticePaused;renderNotice();};if(noticeStrip){noticeStrip.onmouseenter=()=>noticeHovered=true;noticeStrip.onmouseleave=()=>noticeHovered=false;noticeStrip.onfocusin=()=>noticeFocused=true;noticeStrip.onfocusout=e=>{noticeFocused=noticeStrip.contains(e.relatedTarget);};}noticeMotion.addEventListener?.('change',event=>{if(event.matches)noticePaused=true;renderNotice();});
   setInterval(()=>{if(!document.hidden)loadWeather();},15*60*1000);
+  setInterval(()=>{const dialog=$('#appDialog');if(!document.hidden&&dialog.open&&dialog.classList.contains('weather-dialog')&&forecastShownHour!==Math.floor(Date.now()/(60*60*1000)))refreshForecast(false,true);},60*1000);
   detailMotionPreference.addEventListener?.('change',event=>{if(event.matches){cancelDetailTransition();paintDetail();}});
   render();renderNotice();loadWeather();window.BusPlanner={state,render,chooseStop,setRoute,setMode,reportMailto,nextNotice,refreshNotices:renderNotice,openMap};
 })();
